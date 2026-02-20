@@ -1,0 +1,40 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "VADEPAV OIL",
+                      "quantity":  2,
+                      "cost":  44.0
+                  },
+                  {
+                      "name":  "DABELI-OIL",
+                      "quantity":  2,
+                      "cost":  40.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  84.0,
+                   "tax_total":  10.08,
+                   "service_charge":  null,
+                   "discount":  0.08,
+                   "grand_total":  94.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "Tota Qty4 SGST Sub Total 84.00",
+                              "amount":  84.0
+                          },
+                          {
+                              "name":  "CGST %9 6% 5.04 5.04",
+                              "amount":  10.08
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r004.jpg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

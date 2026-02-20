@@ -1,0 +1,38 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "BENNE MASALE DOSE",
+                      "quantity":  2,
+                      "cost":  100.0
+                  },
+                  {
+                      "name":  "IDLY VADE",
+                      "quantity":  2,
+                      "cost":  90.0
+                  },
+                  {
+                      "name":  "COFFEE",
+                      "quantity":  3,
+                      "cost":  45.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  235.0,
+                   "tax_total":  null,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  235.0
+               },
+    "tax_breakdown":  [
+
+                      ],
+    "meta":  {
+                 "image":  "r033.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

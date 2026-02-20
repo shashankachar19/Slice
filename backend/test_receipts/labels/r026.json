@@ -1,0 +1,55 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "GHEE PONGAL",
+                      "quantity":  1,
+                      "cost":  50.0
+                  },
+                  {
+                      "name":  "VADAI",
+                      "quantity":  3,
+                      "cost":  60.0
+                  },
+                  {
+                      "name":  "ROAST",
+                      "quantity":  3,
+                      "cost":  150.0
+                  },
+                  {
+                      "name":  "POORI MASAL",
+                      "quantity":  2,
+                      "cost":  100.0
+                  },
+                  {
+                      "name":  "TEA",
+                      "quantity":  1,
+                      "cost":  25.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  385,
+                   "tax_total":  19.26,
+                   "service_charge":  null,
+                   "discount":  0.26,
+                   "grand_total":  404.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "CGST 2.5%",
+                              "amount":  9.63
+                          },
+                          {
+                              "name":  "SGST 12%",
+                              "amount":  9.63
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r026.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

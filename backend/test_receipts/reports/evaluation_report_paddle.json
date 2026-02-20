@@ -1,0 +1,3560 @@
+{
+  "summary": {
+    "mode": "Paddle-only",
+    "receipts_evaluated": 32,
+    "receipts_skipped": 0,
+    "item_precision_pct": 96.97,
+    "item_recall_pct": 87.91,
+    "item_f1_pct": 92.22,
+    "quantity_accuracy_pct": 91.88,
+    "cost_accuracy_pct": 93.12,
+    "total_match_rate_pct": 53.12,
+    "tp": 160,
+    "fp": 5,
+    "fn": 22
+  },
+  "hard_cases": [
+    [
+      "r001.jpg",
+      "fn=3, fp=0, total_match=False"
+    ],
+    [
+      "r003.jpg",
+      "fn=0, fp=0, total_match=False"
+    ],
+    [
+      "r004.jpg",
+      "fn=1, fp=0, total_match=False"
+    ],
+    [
+      "r008.jpg",
+      "fn=0, fp=0, total_match=False"
+    ],
+    [
+      "r010.jpg",
+      "fn=5, fp=0, total_match=False"
+    ],
+    [
+      "r012.jpg",
+      "fn=3, fp=2, total_match=False"
+    ],
+    [
+      "r014.jpg",
+      "fn=2, fp=2, total_match=False"
+    ],
+    [
+      "r015.jpeg",
+      "fn=3, fp=0, total_match=False"
+    ],
+    [
+      "r018.jpg",
+      "fn=1, fp=0, total_match=False"
+    ],
+    [
+      "r019.jpg",
+      "fn=0, fp=0, total_match=False"
+    ],
+    [
+      "r020.jpg",
+      "fn=0, fp=0, total_match=False"
+    ],
+    [
+      "r022.jpg",
+      "fn=0, fp=0, total_match=False"
+    ],
+    [
+      "r024.jpeg",
+      "fn=1, fp=0, total_match=False"
+    ],
+    [
+      "r025.jpeg",
+      "fn=0, fp=0, total_match=False"
+    ],
+    [
+      "r027.jpeg",
+      "fn=3, fp=1, total_match=False"
+    ]
+  ],
+  "per_receipt": [
+    {
+      "image": "r001.jpg",
+      "label": "r001.json",
+      "metrics": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 3,
+        "pred_count": 4,
+        "gt_count": 7,
+        "pred_total": 1205.0,
+        "gt_total": 1360.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "BUTTER NAAN",
+          "quantity": 1,
+          "cost": 75.0
+        },
+        {
+          "name": "TANDOOR ROTI",
+          "quantity": 1,
+          "cost": 55.0
+        },
+        {
+          "name": "MINERAL WATER 1L",
+          "quantity": 1,
+          "cost": 25.0
+        }
+      ],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "DAAL TADKA",
+            "quantity": 2,
+            "cost": 470.0
+          },
+          "pred_item": {
+            "name": "Daal Tadka",
+            "quantity": 2,
+            "unit_price": 235.0,
+            "cost": 470.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PANEER BUTTER M",
+            "quantity": 1,
+            "cost": 285.0
+          },
+          "pred_item": {
+            "name": "Paneer Butter M",
+            "quantity": 1,
+            "unit_price": 285.0,
+            "cost": 285.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PHULKA",
+            "quantity": 6,
+            "cost": 240.0
+          },
+          "pred_item": {
+            "name": "Phulka",
+            "quantity": 6,
+            "unit_price": 40.0,
+            "cost": 240.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ALOO METHI",
+            "quantity": 1,
+            "cost": 210.0
+          },
+          "pred_item": {
+            "name": "Alco Methi",
+            "quantity": 1,
+            "unit_price": 210.0,
+            "cost": 210.0
+          },
+          "score": 0.935,
+          "name_similarity": 0.9,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r002.jpg",
+      "label": "r002.json",
+      "metrics": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 2,
+        "gt_count": 2,
+        "pred_total": 176.19,
+        "gt_total": 176.19,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "PIECE VADA",
+            "quantity": 1,
+            "cost": 61.9
+          },
+          "pred_item": {
+            "name": "Piece Vada",
+            "quantity": 1,
+            "unit_price": 61.9,
+            "cost": 61.9
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MIX PLATE (DIPPED)",
+            "quantity": 1,
+            "cost": 114.29
+          },
+          "pred_item": {
+            "name": "Mix Plate",
+            "quantity": 1,
+            "unit_price": 114.29,
+            "cost": 114.29
+          },
+          "score": 0.818,
+          "name_similarity": 0.72,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r003.jpg",
+      "label": "r003.json",
+      "metrics": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 7,
+        "gt_count": 7,
+        "pred_total": 2236.0,
+        "gt_total": 1774.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "CRISPY ALOO CUP",
+            "quantity": 1,
+            "cost": 250.0
+          },
+          "pred_item": {
+            "name": "CRISPY ALOO CUP",
+            "quantity": 1,
+            "unit_price": 250.0,
+            "cost": 250.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "A8 DABELI BRUSCHETTA",
+            "quantity": 1,
+            "cost": 275.0
+          },
+          "pred_item": {
+            "name": "A DABELI BRUSCHETTA",
+            "quantity": 1,
+            "unit_price": 275.0,
+            "cost": 275.0
+          },
+          "score": 0.9833,
+          "name_similarity": 0.9744,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "D7 HANDWA PIZZA",
+            "quantity": 1,
+            "cost": 300.0
+          },
+          "pred_item": {
+            "name": "D HANDWA PIZZA",
+            "quantity": 1,
+            "unit_price": 300.0,
+            "cost": 300.0
+          },
+          "score": 0.9776,
+          "name_similarity": 0.9655,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "A6 DAL PAKWAAN",
+            "quantity": 1,
+            "cost": 250.0
+          },
+          "pred_item": {
+            "name": "A DAL PAKWAAN",
+            "quantity": 1,
+            "unit_price": 250.0,
+            "cost": 250.0
+          },
+          "score": 0.9759,
+          "name_similarity": 0.963,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "B10 SEV PURI TACOS",
+            "quantity": 1,
+            "cost": 225.0
+          },
+          "pred_item": {
+            "name": "B SEV PURI TACOS",
+            "quantity": 1,
+            "unit_price": 225.0,
+            "cost": 225.0
+          },
+          "score": 0.9618,
+          "name_similarity": 0.9412,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "D4 STUFFED PANEER CHILLA",
+            "quantity": 1,
+            "cost": 275.0
+          },
+          "pred_item": {
+            "name": "D STUFFED PANEER",
+            "quantity": 1,
+            "unit_price": 275.0,
+            "cost": 275.0
+          },
+          "score": 0.87,
+          "name_similarity": 0.8,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TOMATO BASIL SOUP",
+            "quantity": 1,
+            "cost": 199.0
+          },
+          "pred_item": {
+            "name": "TOMATO BASIL SOUP",
+            "quantity": 1,
+            "unit_price": 199.0,
+            "cost": 661.0
+          },
+          "score": 0.75,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": false
+        }
+      ]
+    },
+    {
+      "image": "r004.jpg",
+      "label": "r004.json",
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 1,
+        "pred_count": 1,
+        "gt_count": 2,
+        "pred_total": 40.0,
+        "gt_total": 84.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "DABELI-OIL",
+          "quantity": 2,
+          "cost": 40.0
+        }
+      ],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "VADEPAV OIL",
+            "quantity": 2,
+            "cost": 44.0
+          },
+          "pred_item": {
+            "name": "Dabeli-Oll Vadepav Ol",
+            "quantity": 1,
+            "unit_price": 40.0,
+            "cost": 40.0
+          },
+          "score": 0.6835,
+          "name_similarity": 0.625,
+          "qty_equal": false,
+          "cost_equal": false
+        }
+      ]
+    },
+    {
+      "image": "r006.jpg",
+      "label": "r006.json",
+      "metrics": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 1,
+        "gt_count": 1,
+        "pred_total": 290.0,
+        "gt_total": 290.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "ULAVACHARU BIRYANI",
+            "quantity": 1,
+            "cost": 290.0
+          },
+          "pred_item": {
+            "name": "Ulavacharu",
+            "quantity": 1,
+            "unit_price": 290.0,
+            "cost": 290.0
+          },
+          "score": 0.8143,
+          "name_similarity": 0.7143,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r007.jpg",
+      "label": "r007.json",
+      "metrics": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 6,
+        "gt_count": 6,
+        "pred_total": 566.0,
+        "gt_total": 566.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "ROASTED PAPAD",
+            "quantity": 3,
+            "cost": 57.0
+          },
+          "pred_item": {
+            "name": "ROASTED PAPAD",
+            "quantity": 3,
+            "unit_price": 19.0,
+            "cost": 57.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "GREEN SALAD",
+            "quantity": 1,
+            "cost": 65.0
+          },
+          "pred_item": {
+            "name": "GREEN SALAD",
+            "quantity": 1,
+            "unit_price": 65.0,
+            "cost": 65.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "DAL FRY",
+            "quantity": 1,
+            "cost": 138.0
+          },
+          "pred_item": {
+            "name": "DAL FRY",
+            "quantity": 1,
+            "unit_price": 138.0,
+            "cost": 138.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PANEER BTR MSL",
+            "quantity": 1,
+            "cost": 212.0
+          },
+          "pred_item": {
+            "name": "PANEER BTR MSL",
+            "quantity": 1,
+            "unit_price": 212.0,
+            "cost": 212.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PLAIN ROTI",
+            "quantity": 2,
+            "cost": 54.0
+          },
+          "pred_item": {
+            "name": "PLAIN ROTI",
+            "quantity": 2,
+            "unit_price": 27.0,
+            "cost": 54.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TAVA CHAPATI PL",
+            "quantity": 1,
+            "cost": 40.0
+          },
+          "pred_item": {
+            "name": "TAVA CHAPATI PL",
+            "quantity": 1,
+            "unit_price": 40.0,
+            "cost": 40.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r008.jpg",
+      "label": "r008.json",
+      "metrics": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 6,
+        "gt_count": 6,
+        "pred_total": 541.0,
+        "gt_total": 625.0,
+        "gt_total_basis": "grand_total",
+        "total_match": false
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "MYSORE DOSA",
+            "quantity": 1,
+            "cost": 75.0
+          },
+          "pred_item": {
+            "name": "MYSORE DOSA",
+            "quantity": 1,
+            "unit_price": 75.0,
+            "cost": 75.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BTR SADA DOSA",
+            "quantity": 1,
+            "cost": 85.0
+          },
+          "pred_item": {
+            "name": "BTR SADA DOSA",
+            "quantity": 1,
+            "unit_price": 85.0,
+            "cost": 85.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "SPL PAV BHAJI",
+            "quantity": 1,
+            "cost": 145.0
+          },
+          "pred_item": {
+            "name": "SPL PAV BHAJI",
+            "quantity": 1,
+            "unit_price": 145.0,
+            "cost": 145.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MAKAI CHEWOA BHEL",
+            "quantity": 2,
+            "cost": 190.0
+          },
+          "pred_item": {
+            "name": "MAKAI CHEWOA BHEL",
+            "quantity": 2,
+            "unit_price": 95.0,
+            "cost": 190.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "EXTRA PAV (1PC)",
+            "quantity": 2,
+            "cost": 40.0
+          },
+          "pred_item": {
+            "name": "EXTRA PAV PC",
+            "quantity": 2,
+            "unit_price": 20.0,
+            "cost": 40.0
+          },
+          "score": 0.974,
+          "name_similarity": 0.96,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "DAHI BATATA PURI",
+            "quantity": 1,
+            "cost": 90.0
+          },
+          "pred_item": {
+            "name": "DAHI BATATA PURI",
+            "quantity": 1,
+            "unit_price": 90.0,
+            "cost": 6.0
+          },
+          "score": 0.7667,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": false
+        }
+      ]
+    },
+    {
+      "image": "r009.jpg",
+      "label": "r009.json",
+      "metrics": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 8,
+        "gt_count": 8,
+        "pred_total": 1020.0,
+        "gt_total": 1020.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "VEG SPRING ROLL",
+            "quantity": 1,
+            "cost": 180.0
+          },
+          "pred_item": {
+            "name": "VEG SPRING ROLL",
+            "quantity": 1,
+            "unit_price": 180.0,
+            "cost": 180.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VEG DIWANI HANDI",
+            "quantity": 1,
+            "cost": 280.0
+          },
+          "pred_item": {
+            "name": "VEG DIWANI HANDI",
+            "quantity": 1,
+            "unit_price": 280.0,
+            "cost": 280.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PANEER MULTANI",
+            "quantity": 1,
+            "cost": 220.0
+          },
+          "pred_item": {
+            "name": "PANEER MULTANI",
+            "quantity": 1,
+            "unit_price": 220.0,
+            "cost": 220.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BUTTER LACCHA PARATHA",
+            "quantity": 1,
+            "cost": 45.0
+          },
+          "pred_item": {
+            "name": "BUTTER LACCHA PARATHA",
+            "quantity": 1,
+            "unit_price": 45.0,
+            "cost": 45.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ROOMALI ROTI",
+            "quantity": 3,
+            "cost": 135.0
+          },
+          "pred_item": {
+            "name": "ROOMALI ROTI",
+            "quantity": 3,
+            "unit_price": 45.0,
+            "cost": 135.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PUNJABI LASSI",
+            "quantity": 1,
+            "cost": 80.0
+          },
+          "pred_item": {
+            "name": "PUNJABI LASSI",
+            "quantity": 1,
+            "unit_price": 80.0,
+            "cost": 80.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "FRESH LIME WATER",
+            "quantity": 2,
+            "cost": 60.0
+          },
+          "pred_item": {
+            "name": "FRESH LIME WATER",
+            "quantity": 2,
+            "unit_price": 30.0,
+            "cost": 60.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BOTTLED WATER",
+            "quantity": 1,
+            "cost": 20.0
+          },
+          "pred_item": {
+            "name": "BOTTLED WATER",
+            "quantity": 1,
+            "unit_price": 20.0,
+            "cost": 20.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r010.jpg",
+      "label": "r010.json",
+      "metrics": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 5,
+        "pred_count": 2,
+        "gt_count": 7,
+        "pred_total": 375.0,
+        "gt_total": 984.05,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "CURD RICE",
+          "quantity": 1,
+          "cost": 185.0
+        },
+        {
+          "name": "UPMA",
+          "quantity": 1,
+          "cost": 145.0
+        },
+        {
+          "name": "HALF VEGETABLE CHOWMEIN",
+          "quantity": 1,
+          "cost": 160.0
+        },
+        {
+          "name": "PRESH LIME SODA",
+          "quantity": 1,
+          "cost": 100.0
+        },
+        {
+          "name": "MINERAL WATER",
+          "quantity": 1,
+          "cost": 19.5
+        }
+      ],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "ONION TOMATO UTTAPPAM",
+            "quantity": 1,
+            "cost": 210.0
+          },
+          "pred_item": {
+            "name": "Onion Tomato",
+            "quantity": 1,
+            "unit_price": 210.0,
+            "cost": 210.0
+          },
+          "score": 0.8227,
+          "name_similarity": 0.7273,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "IDLI VADA SAMBAR",
+            "quantity": 1,
+            "cost": 165.0
+          },
+          "pred_item": {
+            "name": "Idli Vada",
+            "quantity": 1,
+            "unit_price": 165.0,
+            "cost": 165.0
+          },
+          "score": 0.818,
+          "name_similarity": 0.72,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r011.jpg",
+      "label": "r011.json",
+      "metrics": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 6,
+        "gt_count": 6,
+        "pred_total": 13.0,
+        "gt_total": 13.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "HOUSE WINE WHITE GLASS",
+            "quantity": 1,
+            "cost": 3.0
+          },
+          "pred_item": {
+            "name": "House Wine White Glass",
+            "quantity": 1,
+            "unit_price": 3.0,
+            "cost": 3.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VEGETABLE SHORBA",
+            "quantity": 1,
+            "cost": 2.5
+          },
+          "pred_item": {
+            "name": "VEGETABLE SHORBA",
+            "quantity": 1,
+            "unit_price": 2.5,
+            "cost": 2.5
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "GARLIC NAAN",
+            "quantity": 1,
+            "cost": 2.0
+          },
+          "pred_item": {
+            "name": "GARLIC NAAN",
+            "quantity": 1,
+            "unit_price": 2.0,
+            "cost": 2.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "KARI PAKORA",
+            "quantity": 1,
+            "cost": 4.5
+          },
+          "pred_item": {
+            "name": "KARI PAKORA",
+            "quantity": 1,
+            "unit_price": 4.5,
+            "cost": 4.5
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ANGKOR BEER WITH MEAI",
+            "quantity": 1,
+            "cost": 0.5
+          },
+          "pred_item": {
+            "name": "ANGKOR BEER WITH MEAI",
+            "quantity": 0.5,
+            "unit_price": 1.0,
+            "cost": 0.5
+          },
+          "score": 0.95,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ANGKOR BEER WITH MEAL",
+            "quantity": 1,
+            "cost": 0.5
+          },
+          "pred_item": {
+            "name": "ANGKOR BEER WITH MEAL",
+            "quantity": 0.5,
+            "unit_price": 1.0,
+            "cost": 0.5
+          },
+          "score": 0.95,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r012.jpg",
+      "label": "r012.json",
+      "metrics": {
+        "tp": 2,
+        "fp": 2,
+        "fn": 3,
+        "pred_count": 4,
+        "gt_count": 5,
+        "pred_total": 878.04,
+        "gt_total": 977.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "SIKANDARI PANEER",
+          "quantity": 1,
+          "cost": 289.0
+        },
+        {
+          "name": "VEG BANCHOW SOUP",
+          "quantity": 2,
+          "cost": 238.0
+        },
+        {
+          "name": "MARGISI KOFTA",
+          "quantity": 1,
+          "cost": 275.0
+        }
+      ],
+      "unmatched_pred": [
+        {
+          "name": "Veg Banchow Sou StkandartPaneer",
+          "quantity": 1,
+          "unit_price": 738.0,
+          "cost": 738.0
+        },
+        {
+          "name": "CGSI",
+          "quantity": 1,
+          "unit_price": 25.04,
+          "cost": 25.04
+        }
+      ],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "ROOMALI ROTI PLAIN",
+            "quantity": 2,
+            "cost": 120.0
+          },
+          "pred_item": {
+            "name": "Roomai Roti Plain",
+            "quantity": 2,
+            "unit_price": 30.0,
+            "cost": 60.0
+          },
+          "score": 0.8564,
+          "name_similarity": 0.9714,
+          "qty_equal": true,
+          "cost_equal": false
+        },
+        {
+          "gt_item": {
+            "name": "BUTTER KULCHA",
+            "quantity": 1,
+            "cost": 55.0
+          },
+          "pred_item": {
+            "name": "Nargisi Kofta Butter kulcha",
+            "quantity": 1,
+            "unit_price": 55.0,
+            "cost": 55.0
+          },
+          "score": 0.7725,
+          "name_similarity": 0.65,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r014.jpg",
+      "label": "r014.json",
+      "metrics": {
+        "tp": 8,
+        "fp": 2,
+        "fn": 2,
+        "pred_count": 10,
+        "gt_count": 10,
+        "pred_total": 3747.0,
+        "gt_total": 1381.0,
+        "gt_total_basis": "grand_total",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "DAL TADKA",
+          "quantity": 1,
+          "cost": 215.0
+        },
+        {
+          "name": "JEERA RICE",
+          "quantity": 1,
+          "cost": 145.0
+        }
+      ],
+      "unmatched_pred": [
+        {
+          "name": "Tota Amount",
+          "quantity": 1,
+          "unit_price": 1315.0,
+          "cost": 1315.0
+        },
+        {
+          "name": "Bil Amount",
+          "quantity": 1,
+          "unit_price": 1381.0,
+          "cost": 1381.0
+        }
+      ],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "VEG MANCHAW SO",
+            "quantity": 1,
+            "cost": 119.0
+          },
+          "pred_item": {
+            "name": "VEG MANCHAW SO",
+            "quantity": 1,
+            "unit_price": 119.0,
+            "cost": 119.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MUSHROOM MATTA",
+            "quantity": 1,
+            "cost": 265.0
+          },
+          "pred_item": {
+            "name": "MUSHROOM MATTA",
+            "quantity": 1,
+            "unit_price": 265.0,
+            "cost": 265.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BUTTER TANDOOR",
+            "quantity": 1,
+            "cost": 27.0
+          },
+          "pred_item": {
+            "name": "BUTTER TANDOOR",
+            "quantity": 1,
+            "unit_price": 27.0,
+            "cost": 27.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MISSI ROTI",
+            "quantity": 1,
+            "cost": 30.0
+          },
+          "pred_item": {
+            "name": "MISSI ROTI",
+            "quantity": 1,
+            "unit_price": 30.0,
+            "cost": 30.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "GARLIC NAAN",
+            "quantity": 1,
+            "cost": 45.0
+          },
+          "pred_item": {
+            "name": "GARLIC NAAN",
+            "quantity": 1,
+            "unit_price": 45.0,
+            "cost": 45.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BAKED VEG",
+            "quantity": 1,
+            "cost": 270.0
+          },
+          "pred_item": {
+            "name": "BAKED VEG WITH",
+            "quantity": 1,
+            "unit_price": 270.0,
+            "cost": 270.0
+          },
+          "score": 0.8587,
+          "name_similarity": 0.7826,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VEG SWEET CORN",
+            "quantity": 1,
+            "cost": 119.0
+          },
+          "pred_item": {
+            "name": "VEG SWEET CORN",
+            "quantity": 1,
+            "unit_price": 119.0,
+            "cost": 215.0
+          },
+          "score": 0.7983,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": false
+        },
+        {
+          "gt_item": {
+            "name": "PLAIN PAPAD",
+            "quantity": 2,
+            "cost": 80.0
+          },
+          "pred_item": {
+            "name": "JEERA RICE PLAIN PAPAD",
+            "quantity": 2,
+            "unit_price": 40.0,
+            "cost": 80.0
+          },
+          "score": 0.7833,
+          "name_similarity": 0.6667,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r015.jpeg",
+      "label": "r015.json",
+      "metrics": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 3,
+        "pred_count": 2,
+        "gt_count": 5,
+        "pred_total": 456.75,
+        "gt_total": 1035.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "TANDOORI CHICKEN",
+          "quantity": 1,
+          "cost": 309.75
+        },
+        {
+          "name": "LASOONI DAL TADKA",
+          "quantity": 1,
+          "cost": 288.75
+        },
+        {
+          "name": "TANDOORI ROTI",
+          "quantity": 1,
+          "cost": 31.5
+        }
+      ],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "HYDERABADI MURG BIRYANI",
+            "quantity": 1,
+            "cost": 393.75
+          },
+          "pred_item": {
+            "name": "HYDERABADI MURG",
+            "quantity": 1,
+            "unit_price": 375.0,
+            "cost": 393.75
+          },
+          "score": 0.8632,
+          "name_similarity": 0.7895,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TANDOORI ROTI ALL FOOD LESS SPICY",
+            "quantity": 2,
+            "cost": 63.0
+          },
+          "pred_item": {
+            "name": "Tandoori Roti all food",
+            "quantity": 1,
+            "unit_price": 30.0,
+            "cost": 63.0
+          },
+          "score": 0.82,
+          "name_similarity": 0.8,
+          "qty_equal": false,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r016.jpg",
+      "label": "r016.json",
+      "metrics": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 8,
+        "gt_count": 8,
+        "pred_total": 2580.0,
+        "gt_total": 2580.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "FLAVOURED MOJITO",
+            "quantity": 1,
+            "cost": 330.0
+          },
+          "pred_item": {
+            "name": "FLAVOURED MOJITO",
+            "quantity": 1,
+            "unit_price": 330.0,
+            "cost": 330.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CUCUMBER MINT",
+            "quantity": 1,
+            "cost": 170.0
+          },
+          "pred_item": {
+            "name": "CUCUMBER MINT",
+            "quantity": 1,
+            "unit_price": 170.0,
+            "cost": 170.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "LONG ISLAND ELEC",
+            "quantity": 2,
+            "cost": 680.0
+          },
+          "pred_item": {
+            "name": "LONG ISLAND ELEC",
+            "quantity": 2,
+            "unit_price": 340.0,
+            "cost": 680.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CRUNCHY SALAD",
+            "quantity": 1,
+            "cost": 160.0
+          },
+          "pred_item": {
+            "name": "CRUNCHY SALAD",
+            "quantity": 1,
+            "unit_price": 160.0,
+            "cost": 160.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ASSORTED SATAY",
+            "quantity": 1,
+            "cost": 260.0
+          },
+          "pred_item": {
+            "name": "ASSORTED SATAY",
+            "quantity": 1,
+            "unit_price": 260.0,
+            "cost": 260.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TEQUILA CHICKEN",
+            "quantity": 1,
+            "cost": 320.0
+          },
+          "pred_item": {
+            "name": "TEQUILA CHICKEN",
+            "quantity": 1,
+            "unit_price": 320.0,
+            "cost": 320.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "FAJITAS CHICKEN",
+            "quantity": 1,
+            "cost": 300.0
+          },
+          "pred_item": {
+            "name": "FAJITAS CHICKEN",
+            "quantity": 1,
+            "unit_price": 300.0,
+            "cost": 300.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "SURF N TURF",
+            "quantity": 1,
+            "cost": 360.0
+          },
+          "pred_item": {
+            "name": "SURF N TURF",
+            "quantity": 1,
+            "unit_price": 360.0,
+            "cost": 360.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r018.jpg",
+      "label": "r018.json",
+      "metrics": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 1,
+        "pred_count": 4,
+        "gt_count": 5,
+        "pred_total": 930.0,
+        "gt_total": 1120.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "GREY GOOSE",
+          "quantity": 1,
+          "cost": 190.0
+        }
+      ],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "CHICKEN MALAI TIKKA",
+            "quantity": 1,
+            "cost": 240.0
+          },
+          "pred_item": {
+            "name": "CHICKEN MALAI TIKKA",
+            "quantity": 1,
+            "unit_price": 240.0,
+            "cost": 240.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "GULAB JAMUN WITH ICE",
+            "quantity": 1,
+            "cost": 160.0
+          },
+          "pred_item": {
+            "name": "GULAB JAMUN WITH ICE",
+            "quantity": 1,
+            "unit_price": 160.0,
+            "cost": 160.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "GLASS WINE",
+            "quantity": 3,
+            "cost": 450.0
+          },
+          "pred_item": {
+            "name": "GLASS WINE",
+            "quantity": 3,
+            "unit_price": 150.0,
+            "cost": 450.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "STUFFED PARATHA ",
+            "quantity": 1,
+            "cost": 80.0
+          },
+          "pred_item": {
+            "name": "STUFFEDPARATHA (ON",
+            "quantity": 1,
+            "unit_price": 80.0,
+            "cost": 80.0
+          },
+          "score": 0.9187,
+          "name_similarity": 0.875,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r019.jpg",
+      "label": "r019.json",
+      "metrics": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 7,
+        "gt_count": 7,
+        "pred_total": 455.1,
+        "gt_total": 635.1,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "DAL MAKHNI",
+            "quantity": 1,
+            "cost": 150.0
+          },
+          "pred_item": {
+            "name": "DAL MAKHNI",
+            "quantity": 1,
+            "unit_price": 150.0,
+            "cost": 150.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "SWEET LASSI",
+            "quantity": 2,
+            "cost": 120.0
+          },
+          "pred_item": {
+            "name": "SWEET LASSI",
+            "quantity": 2,
+            "unit_price": 60.0,
+            "cost": 120.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "KINLEY WATER",
+            "quantity": 1,
+            "cost": 22.1
+          },
+          "pred_item": {
+            "name": "KINLEY WATER",
+            "quantity": 1,
+            "unit_price": 22.1,
+            "cost": 22.1
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PLAIN ROTI",
+            "quantity": 1,
+            "cost": 18.0
+          },
+          "pred_item": {
+            "name": "PLAIN ROTI",
+            "quantity": 1,
+            "unit_price": 18.0,
+            "cost": 18.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "KULLAD CHAI",
+            "quantity": 1,
+            "cost": 35.0
+          },
+          "pred_item": {
+            "name": "KULLAD CHAI",
+            "quantity": 1,
+            "unit_price": 35.0,
+            "cost": 35.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ALU PRANTHA",
+            "quantity": 1,
+            "cost": 55.0
+          },
+          "pred_item": {
+            "name": "PRANTHA ALU PRANTHA",
+            "quantity": 1,
+            "unit_price": 55.0,
+            "cost": 55.0
+          },
+          "score": 0.8267,
+          "name_similarity": 0.7333,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ALOO PYAAZ PRANTHA",
+            "quantity": 1,
+            "cost": 55.0
+          },
+          "pred_item": {
+            "name": "ALOO PYAAZ",
+            "quantity": 1,
+            "unit_price": 55.0,
+            "cost": 55.0
+          },
+          "score": 0.8143,
+          "name_similarity": 0.7143,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r020.jpg",
+      "label": "r020.json",
+      "metrics": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 8,
+        "gt_count": 8,
+        "pred_total": 205234.0,
+        "gt_total": 872.0,
+        "gt_total_basis": "grand_total",
+        "total_match": false
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "JEERA RICE",
+            "quantity": 1,
+            "cost": 77.0
+          },
+          "pred_item": {
+            "name": "Jeera Rice",
+            "quantity": 1,
+            "unit_price": 77.0,
+            "cost": 77.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CHILLI PANEER DRY",
+            "quantity": 1,
+            "cost": 155.0
+          },
+          "pred_item": {
+            "name": "Chilli Paneer",
+            "quantity": 1,
+            "unit_price": 155.0,
+            "cost": 155.0
+          },
+          "score": 0.9133,
+          "name_similarity": 0.8667,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "DAL TADKA",
+            "quantity": 1,
+            "cost": 115.0
+          },
+          "pred_item": {
+            "name": "Dal Tadka",
+            "quantity": 1,
+            "unit_price": 1.0,
+            "cost": 1.0
+          },
+          "score": 0.7522,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": false
+        },
+        {
+          "gt_item": {
+            "name": "CHICKEN CHETTINAD",
+            "quantity": 1,
+            "cost": 170.0
+          },
+          "pred_item": {
+            "name": "Chicken Chettinad",
+            "quantity": 1,
+            "unit_price": 1.0,
+            "cost": 1.0
+          },
+          "score": 0.7515,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": false
+        },
+        {
+          "gt_item": {
+            "name": "KADAK TEA",
+            "quantity": 1,
+            "cost": 65.0
+          },
+          "pred_item": {
+            "name": "Kadak Tea",
+            "quantity": 1,
+            "unit_price": 65000.0,
+            "cost": 65000.0
+          },
+          "score": 0.75,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": false
+        },
+        {
+          "gt_item": {
+            "name": "TAWA ROTI",
+            "quantity": 4,
+            "cost": 120.0
+          },
+          "pred_item": {
+            "name": "Tawa Roti",
+            "quantity": 1,
+            "unit_price": 30000.0,
+            "cost": 30000.0
+          },
+          "score": 0.675,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": false
+        },
+        {
+          "gt_item": {
+            "name": "WATER DASAMINI 1.5 LTR",
+            "quantity": 1,
+            "cost": 50.0
+          },
+          "pred_item": {
+            "name": "Water Dasani Ltr",
+            "quantity": 1,
+            "unit_price": 50000.0,
+            "cost": 50000.0
+          },
+          "score": 0.6474,
+          "name_similarity": 0.8421,
+          "qty_equal": true,
+          "cost_equal": false
+        },
+        {
+          "gt_item": {
+            "name": "GARLIC NAAN",
+            "quantity": 2,
+            "cost": 60.0
+          },
+          "pred_item": {
+            "name": "Gariic Naan",
+            "quantity": 1,
+            "unit_price": 60000.0,
+            "cost": 60000.0
+          },
+          "score": 0.6409,
+          "name_similarity": 0.9091,
+          "qty_equal": false,
+          "cost_equal": false
+        }
+      ]
+    },
+    {
+      "image": "r021.jpg",
+      "label": "r021.json",
+      "metrics": {
+        "tp": 6,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 6,
+        "gt_count": 6,
+        "pred_total": 840.0,
+        "gt_total": 840.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "WATER BOTTLE",
+            "quantity": 1,
+            "cost": 30.0
+          },
+          "pred_item": {
+            "name": "Water Bottle",
+            "quantity": 1,
+            "unit_price": 30.0,
+            "cost": 30.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "KADAL CHICKEN",
+            "quantity": 1,
+            "cost": 250.0
+          },
+          "pred_item": {
+            "name": "Kadal Chicken",
+            "quantity": 1,
+            "unit_price": 250.0,
+            "cost": 250.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "SOFT DRINKS",
+            "quantity": 1,
+            "cost": 40.0
+          },
+          "pred_item": {
+            "name": "Soft Drinks",
+            "quantity": 1,
+            "unit_price": 40.0,
+            "cost": 40.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "KASHMIRI PULAO",
+            "quantity": 1,
+            "cost": 130.0
+          },
+          "pred_item": {
+            "name": "Kashmiri",
+            "quantity": 1,
+            "unit_price": 130.0,
+            "cost": 130.0
+          },
+          "score": 0.8227,
+          "name_similarity": 0.7273,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CRISPY CHILLL BABY CORN",
+            "quantity": 1,
+            "cost": 170.0
+          },
+          "pred_item": {
+            "name": "Crispy Chilll",
+            "quantity": 1,
+            "unit_price": 170.0,
+            "cost": 170.0
+          },
+          "score": 0.8194,
+          "name_similarity": 0.7222,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MUTTON BIRYANI",
+            "quantity": 1,
+            "cost": 220.0
+          },
+          "pred_item": {
+            "name": "Mutton",
+            "quantity": 1,
+            "unit_price": 220.0,
+            "cost": 220.0
+          },
+          "score": 0.74,
+          "name_similarity": 0.6,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r022.jpg",
+      "label": "r022.json",
+      "metrics": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 8,
+        "gt_count": 8,
+        "pred_total": 2580.0,
+        "gt_total": 9000.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "FLAVOURED MOJITO",
+            "quantity": 1,
+            "cost": 330.0
+          },
+          "pred_item": {
+            "name": "FLAVOURED MOJITO",
+            "quantity": 1,
+            "unit_price": 330.0,
+            "cost": 330.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CUCUMBER MINT",
+            "quantity": 1,
+            "cost": 170.0
+          },
+          "pred_item": {
+            "name": "CUCUMBER MINT",
+            "quantity": 1,
+            "unit_price": 170.0,
+            "cost": 170.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "LONG ISLAND ELEC",
+            "quantity": 2,
+            "cost": 680.0
+          },
+          "pred_item": {
+            "name": "LONG ISLAND ELEC",
+            "quantity": 2,
+            "unit_price": 340.0,
+            "cost": 680.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CRUNCHY SALAD",
+            "quantity": 1,
+            "cost": 160.0
+          },
+          "pred_item": {
+            "name": "CRUNCHY SALAD",
+            "quantity": 1,
+            "unit_price": 160.0,
+            "cost": 160.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ASSORTED SATAY",
+            "quantity": 1,
+            "cost": 260.0
+          },
+          "pred_item": {
+            "name": "ASSORTED SATAY",
+            "quantity": 1,
+            "unit_price": 260.0,
+            "cost": 260.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TEQUILA CHICKEN",
+            "quantity": 1,
+            "cost": 320.0
+          },
+          "pred_item": {
+            "name": "TEQUILA CHICKEN",
+            "quantity": 1,
+            "unit_price": 320.0,
+            "cost": 320.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "FAJITAS CHICKEN",
+            "quantity": 1,
+            "cost": 300.0
+          },
+          "pred_item": {
+            "name": "FAJITAS CHICKEN",
+            "quantity": 1,
+            "unit_price": 300.0,
+            "cost": 300.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "SURF N TURF",
+            "quantity": 1,
+            "cost": 360.0
+          },
+          "pred_item": {
+            "name": "SURF N TURF",
+            "quantity": 1,
+            "unit_price": 360.0,
+            "cost": 360.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r023.jpeg",
+      "label": "r023.json",
+      "metrics": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 5,
+        "gt_count": 5,
+        "pred_total": 385.0,
+        "gt_total": 385.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "GHEE PONGAL",
+            "quantity": 1,
+            "cost": 50.0
+          },
+          "pred_item": {
+            "name": "GHEE PONGAL",
+            "quantity": 1,
+            "unit_price": 50.0,
+            "cost": 50.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TEA",
+            "quantity": 1,
+            "cost": 25.0
+          },
+          "pred_item": {
+            "name": "TEA",
+            "quantity": 1,
+            "unit_price": 25.0,
+            "cost": 25.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "POORI MASAL",
+            "quantity": 2,
+            "cost": 100.0
+          },
+          "pred_item": {
+            "name": "POORI MASAL",
+            "quantity": 1,
+            "unit_price": 100.0,
+            "cost": 100.0
+          },
+          "score": 0.95,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VADAI",
+            "quantity": 3,
+            "cost": 60.0
+          },
+          "pred_item": {
+            "name": "VADAI",
+            "quantity": 1,
+            "unit_price": 60.0,
+            "cost": 60.0
+          },
+          "score": 0.9333,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ROAST",
+            "quantity": 3,
+            "cost": 150.0
+          },
+          "pred_item": {
+            "name": "ROAST",
+            "quantity": 1,
+            "unit_price": 150.0,
+            "cost": 150.0
+          },
+          "score": 0.9333,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r024.jpeg",
+      "label": "r024.json",
+      "metrics": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 1,
+        "pred_count": 4,
+        "gt_count": 5,
+        "pred_total": 525.0,
+        "gt_total": 605.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "MSL DOSA",
+          "quantity": 1,
+          "cost": 80.0
+        }
+      ],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "MEDU WADA",
+            "quantity": 1,
+            "cost": 65.0
+          },
+          "pred_item": {
+            "name": "MEDU WADA",
+            "quantity": 1,
+            "unit_price": 65.0,
+            "cost": 65.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "SADA DOSA",
+            "quantity": 1,
+            "cost": 70.0
+          },
+          "pred_item": {
+            "name": "SADA DOSA",
+            "quantity": 1,
+            "unit_price": 70.0,
+            "cost": 70.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ONION RAVA DOSA",
+            "quantity": 2,
+            "cost": 160.0
+          },
+          "pred_item": {
+            "name": "ONION RAVA DOSA",
+            "quantity": 2,
+            "unit_price": 80.0,
+            "cost": 160.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CHEESE TOAST",
+            "quantity": 2,
+            "cost": 230.0
+          },
+          "pred_item": {
+            "name": "CHEESE TOAST S/W",
+            "quantity": 2,
+            "unit_price": 115.0,
+            "cost": 230.0
+          },
+          "score": 0.9071,
+          "name_similarity": 0.8571,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r025.jpeg",
+      "label": "r025.json",
+      "metrics": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 4,
+        "gt_count": 4,
+        "pred_total": 490.0,
+        "gt_total": 514.5,
+        "gt_total_basis": "grand_total",
+        "total_match": false
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "PANEER BUTTER MASALA",
+            "quantity": 1,
+            "cost": 180.0
+          },
+          "pred_item": {
+            "name": "Paneer Butter Masala",
+            "quantity": 1,
+            "unit_price": 180.0,
+            "cost": 180.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VEG BIRYANI",
+            "quantity": 1,
+            "cost": 150.0
+          },
+          "pred_item": {
+            "name": "Veg Biryani",
+            "quantity": 1,
+            "unit_price": 150.0,
+            "cost": 150.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TANDOORI ROTI",
+            "quantity": 3,
+            "cost": 60.0
+          },
+          "pred_item": {
+            "name": "Tandoori Roti",
+            "quantity": 3,
+            "unit_price": 20.0,
+            "cost": 60.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "GULAB JAMUN",
+            "quantity": 2,
+            "cost": 100.0
+          },
+          "pred_item": {
+            "name": "Gulab Jamun",
+            "quantity": 2,
+            "unit_price": 100.0,
+            "cost": 100.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r026.jpeg",
+      "label": "r026.json",
+      "metrics": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 5,
+        "gt_count": 5,
+        "pred_total": 385.0,
+        "gt_total": 385.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "GHEE PONGAL",
+            "quantity": 1,
+            "cost": 50.0
+          },
+          "pred_item": {
+            "name": "GHEE PONGAL",
+            "quantity": 1,
+            "unit_price": 50.0,
+            "cost": 50.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TEA",
+            "quantity": 1,
+            "cost": 25.0
+          },
+          "pred_item": {
+            "name": "TEA",
+            "quantity": 1,
+            "unit_price": 25.0,
+            "cost": 25.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "POORI MASAL",
+            "quantity": 2,
+            "cost": 100.0
+          },
+          "pred_item": {
+            "name": "POORI MASAL",
+            "quantity": 1,
+            "unit_price": 100.0,
+            "cost": 100.0
+          },
+          "score": 0.95,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VADAI",
+            "quantity": 3,
+            "cost": 60.0
+          },
+          "pred_item": {
+            "name": "VADAI",
+            "quantity": 1,
+            "unit_price": 60.0,
+            "cost": 60.0
+          },
+          "score": 0.9333,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ROAST",
+            "quantity": 3,
+            "cost": 150.0
+          },
+          "pred_item": {
+            "name": "ROAST",
+            "quantity": 1,
+            "unit_price": 150.0,
+            "cost": 150.0
+          },
+          "score": 0.9333,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r027.jpeg",
+      "label": "r027.json",
+      "metrics": {
+        "tp": 7,
+        "fp": 1,
+        "fn": 3,
+        "pred_count": 8,
+        "gt_count": 10,
+        "pred_total": 1875.0,
+        "gt_total": 2011.0,
+        "gt_total_basis": "subtotal",
+        "total_match": false
+      },
+      "unmatched_gt": [
+        {
+          "name": "PAPAD",
+          "quantity": 5,
+          "cost": 75.0
+        },
+        {
+          "name": "BOTTLED WATER",
+          "quantity": 3,
+          "cost": 36.0
+        },
+        {
+          "name": "PREMIUM WHISKY",
+          "quantity": 4,
+          "cost": 100.0
+        }
+      ],
+      "unmatched_pred": [
+        {
+          "name": "peded",
+          "quantity": 5,
+          "unit_price": 15.0,
+          "cost": 75.0
+        }
+      ],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "TSF PLATTER PANEER AATI",
+            "quantity": 2,
+            "cost": 300.0
+          },
+          "pred_item": {
+            "name": "Tsf Platter Paneer Aati",
+            "quantity": 2,
+            "unit_price": 150.0,
+            "cost": 300.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ASSORTED VEG PLATTER",
+            "quantity": 2,
+            "cost": 500.0
+          },
+          "pred_item": {
+            "name": "Assorted Veg Platter",
+            "quantity": 2,
+            "unit_price": 250.0,
+            "cost": 500.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TSF PLATTER KADHAI PANE",
+            "quantity": 2,
+            "cost": 300.0
+          },
+          "pred_item": {
+            "name": "Tsf Platter Kadhai Pane",
+            "quantity": 2,
+            "unit_price": 150.0,
+            "cost": 300.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CHOICE OF JUICE",
+            "quantity": 4,
+            "cost": 160.0
+          },
+          "pred_item": {
+            "name": "Choice Of Juice",
+            "quantity": 4,
+            "unit_price": 40.0,
+            "cost": 160.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "AERATED WATER",
+            "quantity": 2,
+            "cost": 60.0
+          },
+          "pred_item": {
+            "name": "Aerated Water",
+            "quantity": 2,
+            "unit_price": 30.0,
+            "cost": 60.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "LAHORI MURGH TANDOORI",
+            "quantity": 1,
+            "cost": 180.0
+          },
+          "pred_item": {
+            "name": "Lahori Murgh Tandoori F",
+            "quantity": 1,
+            "unit_price": 180.0,
+            "cost": 180.0
+          },
+          "score": 0.9705,
+          "name_similarity": 0.9545,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BEER BOTTLE",
+            "quantity": 5,
+            "cost": 300.0
+          },
+          "pred_item": {
+            "name": "Heer Bottle",
+            "quantity": 5,
+            "unit_price": 60.0,
+            "cost": 300.0
+          },
+          "score": 0.9409,
+          "name_similarity": 0.9091,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r028.jpeg",
+      "label": "r028.json",
+      "metrics": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 5,
+        "gt_count": 5,
+        "pred_total": 1689.0,
+        "gt_total": 1689.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "VEG THALI",
+            "quantity": 1,
+            "cost": 349.0
+          },
+          "pred_item": {
+            "name": "Veg Thali",
+            "quantity": 1,
+            "unit_price": 349.0,
+            "cost": 349.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MUTTON FRY",
+            "quantity": 1,
+            "cost": 450.0
+          },
+          "pred_item": {
+            "name": "MUTTON FRY",
+            "quantity": 1,
+            "unit_price": 450.0,
+            "cost": 450.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PRAWN DRY",
+            "quantity": 1,
+            "cost": 450.0
+          },
+          "pred_item": {
+            "name": "PRAWN DRY",
+            "quantity": 1,
+            "unit_price": 450.0,
+            "cost": 450.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BUTTER MILK",
+            "quantity": 1,
+            "cost": 70.0
+          },
+          "pred_item": {
+            "name": "BUTTER MILK",
+            "quantity": 1,
+            "unit_price": 70.0,
+            "cost": 70.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CHICKEN GRAVY",
+            "quantity": 1,
+            "cost": 370.0
+          },
+          "pred_item": {
+            "name": "CHICKEN GRAVY",
+            "quantity": 1,
+            "unit_price": 370.0,
+            "cost": 370.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r029.jpeg",
+      "label": "r029.json",
+      "metrics": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 5,
+        "gt_count": 5,
+        "pred_total": 602.0,
+        "gt_total": 602.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "FRESH LIME SODA (S)",
+            "quantity": 1,
+            "cost": 60.0
+          },
+          "pred_item": {
+            "name": "Fresh Lime Soda S",
+            "quantity": 1,
+            "unit_price": 50.0,
+            "cost": 60.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "LEMON RICE",
+            "quantity": 1,
+            "cost": 102.0
+          },
+          "pred_item": {
+            "name": "Lemon Rice",
+            "quantity": 1,
+            "unit_price": 102.0,
+            "cost": 102.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "FILTER COFFEE",
+            "quantity": 2,
+            "cost": 84.0
+          },
+          "pred_item": {
+            "name": "Filter Coffee",
+            "quantity": 2,
+            "unit_price": 42.0,
+            "cost": 84.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CHILLI PANEER (DRY)",
+            "quantity": 1,
+            "cost": 186.0
+          },
+          "pred_item": {
+            "name": "Chill Paneer (Dry",
+            "quantity": 1,
+            "unit_price": 186.0,
+            "cost": 186.0
+          },
+          "score": 0.9803,
+          "name_similarity": 0.9697,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "ANDHRA PESARATTU",
+            "quantity": 1,
+            "cost": 170.0
+          },
+          "pred_item": {
+            "name": "Andnra Pesarattu",
+            "quantity": 1,
+            "unit_price": 170.0,
+            "cost": 170.0
+          },
+          "score": 0.9594,
+          "name_similarity": 0.9375,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r030.jpeg",
+      "label": "r030.json",
+      "metrics": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 4,
+        "gt_count": 4,
+        "pred_total": 950.0,
+        "gt_total": 950.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "DHABA CHICKEN TIKKA",
+            "quantity": 1,
+            "cost": 345.0
+          },
+          "pred_item": {
+            "name": "Dhaba Chicken Tikka",
+            "quantity": 1,
+            "unit_price": 345.0,
+            "cost": 345.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BUTTER CHICKEN",
+            "quantity": 1,
+            "cost": 425.0
+          },
+          "pred_item": {
+            "name": "Butter Chicken",
+            "quantity": 1,
+            "unit_price": 425.0,
+            "cost": 425.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "GARLIC NAAN",
+            "quantity": 1,
+            "cost": 95.0
+          },
+          "pred_item": {
+            "name": "Garlic Naan",
+            "quantity": 1,
+            "unit_price": 95.0,
+            "cost": 95.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "BUTTER NAAN",
+            "quantity": 1,
+            "cost": 85.0
+          },
+          "pred_item": {
+            "name": "Butter Naan",
+            "quantity": 1,
+            "unit_price": 85.0,
+            "cost": 85.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r031.jpeg",
+      "label": "r031.json",
+      "metrics": {
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 4,
+        "gt_count": 4,
+        "pred_total": 610.0,
+        "gt_total": 610.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "CHILLI GARLIC NOODLE",
+            "quantity": 1,
+            "cost": 155.0
+          },
+          "pred_item": {
+            "name": "CHILLI GARLIC NOODLE",
+            "quantity": 1,
+            "unit_price": 155.0,
+            "cost": 155.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "CHILLI GARLIC NOODLE",
+            "quantity": 1,
+            "cost": 175.0
+          },
+          "pred_item": {
+            "name": "CHILLI GARLIC NOODLE",
+            "quantity": 1,
+            "unit_price": 175.0,
+            "cost": 175.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "DRUMS OF HEAVEN",
+            "quantity": 1,
+            "cost": 240.0
+          },
+          "pred_item": {
+            "name": "DRUMS OF HEAVEN",
+            "quantity": 1,
+            "unit_price": 240.0,
+            "cost": 240.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MINERAL WATER",
+            "quantity": 2,
+            "cost": 40.0
+          },
+          "pred_item": {
+            "name": "MINERAL WATER",
+            "quantity": 2,
+            "unit_price": 20.0,
+            "cost": 40.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r032.jpeg",
+      "label": "r032.json",
+      "metrics": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 8,
+        "gt_count": 8,
+        "pred_total": 3750.0,
+        "gt_total": 3750.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "MUTTON GHEE ROAST",
+            "quantity": 1,
+            "cost": 625.0
+          },
+          "pred_item": {
+            "name": "MUTTON GHEE ROAST",
+            "quantity": 1,
+            "unit_price": 625.0,
+            "cost": 625.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TAMATAR KI CHAAT",
+            "quantity": 1,
+            "cost": 425.0
+          },
+          "pred_item": {
+            "name": "TAMATAR KI CHAAT",
+            "quantity": 1,
+            "unit_price": 425.0,
+            "cost": 425.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "AAM PANNA",
+            "quantity": 1,
+            "cost": 200.0
+          },
+          "pred_item": {
+            "name": "AAM PANNA",
+            "quantity": 1,
+            "unit_price": 200.0,
+            "cost": 200.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "JAMUN BUTER CHX",
+            "quantity": 1,
+            "cost": 795.0
+          },
+          "pred_item": {
+            "name": "JAMUN BUTER CHX",
+            "quantity": 1,
+            "unit_price": 795.0,
+            "cost": 795.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "KER SANGRI KOFTE",
+            "quantity": 1,
+            "cost": 595.0
+          },
+          "pred_item": {
+            "name": "KER SANGRI KOFTE",
+            "quantity": 1,
+            "unit_price": 595.0,
+            "cost": 595.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "LAL MAAS",
+            "quantity": 1,
+            "cost": 675.0
+          },
+          "pred_item": {
+            "name": "LAL MAAS",
+            "quantity": 1,
+            "unit_price": 675.0,
+            "cost": 675.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TANDOORI ROTI",
+            "quantity": 1,
+            "cost": 145.0
+          },
+          "pred_item": {
+            "name": "TANDOORI ROTI",
+            "quantity": 1,
+            "unit_price": 145.0,
+            "cost": 145.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "MALABAR PARATHA",
+            "quantity": 2,
+            "cost": 290.0
+          },
+          "pred_item": {
+            "name": "MALABAR PARATHA",
+            "quantity": 1,
+            "unit_price": 2145.0,
+            "cost": 290.0
+          },
+          "score": 0.95,
+          "name_similarity": 1.0,
+          "qty_equal": false,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r033.jpeg",
+      "label": "r033.json",
+      "metrics": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 3,
+        "gt_count": 3,
+        "pred_total": 235.0,
+        "gt_total": 235.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "BENNE MASALE DOSE",
+            "quantity": 2,
+            "cost": 100.0
+          },
+          "pred_item": {
+            "name": "BENNE MASALE DOSE",
+            "quantity": 2,
+            "unit_price": 50.0,
+            "cost": 100.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "IDLY VADE",
+            "quantity": 2,
+            "cost": 90.0
+          },
+          "pred_item": {
+            "name": "IDLY VADE",
+            "quantity": 2,
+            "unit_price": 45.0,
+            "cost": 90.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "COFFEE",
+            "quantity": 3,
+            "cost": 45.0
+          },
+          "pred_item": {
+            "name": "COFFEE",
+            "quantity": 3,
+            "unit_price": 15.0,
+            "cost": 45.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r034.jpeg",
+      "label": "r034.json",
+      "metrics": {
+        "tp": 7,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 7,
+        "gt_count": 7,
+        "pred_total": 1431.0,
+        "gt_total": 1431.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "FILTER COFFEE",
+            "quantity": 1,
+            "cost": 135.0
+          },
+          "pred_item": {
+            "name": "FILTER COFFEE",
+            "quantity": 1,
+            "unit_price": 135.08,
+            "cost": 135.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "FILTER COFFEE",
+            "quantity": 1,
+            "cost": 135.0
+          },
+          "pred_item": {
+            "name": "FILTER COFFEE",
+            "quantity": 1,
+            "unit_price": 135.0,
+            "cost": 135.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PODI IDLI",
+            "quantity": 1,
+            "cost": 270.0
+          },
+          "pred_item": {
+            "name": "PODI IDLI",
+            "quantity": 1,
+            "unit_price": 270.0,
+            "cost": 270.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VAZHAIPOO VADAI",
+            "quantity": 1,
+            "cost": 297.0
+          },
+          "pred_item": {
+            "name": "VAZHAIPOO VADAI",
+            "quantity": 1,
+            "unit_price": 297.0,
+            "cost": 297.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VAZHAIKAI BAJJI",
+            "quantity": 1,
+            "cost": 225.0
+          },
+          "pred_item": {
+            "name": "VAZHAIKAI BAJJI",
+            "quantity": 1,
+            "unit_price": 225.0,
+            "cost": 225.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "VEEN WATER BOTTLE",
+            "quantity": 1,
+            "cost": 162.0
+          },
+          "pred_item": {
+            "name": "VEEN WATER BOTTLE",
+            "quantity": 1,
+            "unit_price": 162.0,
+            "cost": 162.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "PARUTHIPAAL HALWA",
+            "quantity": 1,
+            "cost": 207.0
+          },
+          "pred_item": {
+            "name": "PARUTHIPAAL HALWA",
+            "quantity": 1,
+            "unit_price": 207.0,
+            "cost": 207.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    },
+    {
+      "image": "r035.jpeg",
+      "label": "r035.json",
+      "metrics": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "pred_count": 3,
+        "gt_count": 3,
+        "pred_total": 1523.0,
+        "gt_total": 1523.0,
+        "gt_total_basis": "subtotal",
+        "total_match": true
+      },
+      "unmatched_gt": [],
+      "unmatched_pred": [],
+      "matched_pairs": [
+        {
+          "gt_item": {
+            "name": "BUFFET ON THE TABLE",
+            "quantity": 2,
+            "cost": 1198.0
+          },
+          "pred_item": {
+            "name": "Buffet On The Table",
+            "quantity": 2,
+            "unit_price": 599.0,
+            "cost": 1198.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "DIET COKE",
+            "quantity": 1,
+            "cost": 110.0
+          },
+          "pred_item": {
+            "name": "Diet Coke",
+            "quantity": 1,
+            "unit_price": 110.0,
+            "cost": 110.0
+          },
+          "score": 1.0,
+          "name_similarity": 1.0,
+          "qty_equal": true,
+          "cost_equal": true
+        },
+        {
+          "gt_item": {
+            "name": "TOM YUM PRAWNS SOUP",
+            "quantity": 1,
+            "cost": 215.0
+          },
+          "pred_item": {
+            "name": "Tom Yu Prawns Soup",
+            "quantity": 1,
+            "unit_price": 215.0,
+            "cost": 215.0
+          },
+          "score": 0.9824,
+          "name_similarity": 0.973,
+          "qty_equal": true,
+          "cost_equal": true
+        }
+      ]
+    }
+  ]
+}

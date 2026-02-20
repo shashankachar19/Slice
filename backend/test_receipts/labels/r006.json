@@ -1,0 +1,35 @@
+{
+  "items": [
+    {
+      "name": "ULAVACHARU BIRYANI",
+      "quantity": 1,
+      "cost": 290.0
+    }
+  ],
+  "totals": {
+    "subtotal": 290.0,
+    "tax_total": 15.5,
+    "service_charge": 7.25,
+    "discount": null,
+    "grand_total": 305.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "CGST2.5% 7.25",
+      "amount": 7.25
+    },
+    {
+      "name": "SGST2.5% 7.25",
+      "amount": 7.25
+    }
+  ],
+  "meta": {
+    "image": "r006.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": true,
+      "double_checked": true
+    }
+  }
+}

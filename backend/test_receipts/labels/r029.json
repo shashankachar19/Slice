@@ -1,0 +1,55 @@
+{
+  "items": [
+    {
+      "name": "FRESH LIME SODA (S)",
+      "quantity": 1,
+      "cost": 60.0
+    },
+    {
+      "name": "CHILLI PANEER (DRY)",
+      "quantity": 1,
+      "cost": 186.0
+    },
+    {
+      "name": "ANDHRA PESARATTU",
+      "quantity": 1,
+      "cost": 170.0
+    },
+    {
+      "name": "LEMON RICE",
+      "quantity": 1,
+      "cost": 102.0
+    },
+    {
+      "name": "FILTER COFFEE",
+      "quantity": 2,
+      "cost": 84.0
+    }
+  ],
+  "totals": {
+    "subtotal": 602.0,
+    "tax_total": 115.4,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 718.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "SERVICE TAX 5.6%",
+      "amount": 36.12
+    },
+    {
+      "name": "VAT",
+      "amount": 79.75
+    }
+  ],
+  "meta": {
+    "image": "r029.jpeg",
+    "status": "done",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": true,
+      "double_checked": true
+    }
+  }
+}

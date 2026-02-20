@@ -1,0 +1,59 @@
+{
+  "items": [
+    {
+      "name": "TANDOORI CHICKEN",
+      "quantity": 1,
+      "cost": 309.75
+    },
+    {
+      "name": "LASOONI DAL TADKA",
+      "quantity": 1,
+      "cost": 288.75
+    },
+    {
+      "name": "HYDERABADI MURG BIRYANI",
+      "quantity": 1,
+      "cost": 393.75
+    },
+    {
+      "name": "TANDOORI ROTI ALL FOOD LESS SPICY",
+      "quantity": 2,
+      "cost": 63.0
+    },
+    {
+      "name": "TANDOORI ROTI",
+      "quantity": 1,
+      "cost": 31.50
+    }
+  ],
+  "totals": {
+    "subtotal": 1035.0,
+    "tax_total": 103.53 ,
+    "service_charge": 51.75,
+    "discount": null,
+    "grand_total": 1139.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "STAX",
+      "amount": 51.75
+    },
+    {
+      "name": "CGST@2.5",
+      "amount": 25.89
+    },
+    {
+      "name": "SGST@2.5",
+      "amount": 25.89
+    }
+  ],
+  "meta": {
+    "image": "r015.jpeg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

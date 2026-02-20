@@ -1,0 +1,40 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "MIX PLATE (DIPPED)",
+                      "quantity":  1,
+                      "cost":  114.29
+                  },
+                  {
+                      "name":  "PIECE VADA",
+                      "quantity":  1,
+                      "cost":  61.9
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  176.19,
+                   "tax_total":  8.8,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  185
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "cgst 2.5% 4.40",
+                              "amount":  4.4
+                          },
+                          {
+                              "name":  "sgst 2.5% 4.40",
+                              "amount":  4.4
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r002.jpg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

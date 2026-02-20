@@ -1,0 +1,65 @@
+{
+  "items": [
+    {
+      "name": "IDLI VADA SAMBAR",
+      "quantity": 1,
+      "cost": 165.0
+    },
+    {
+      "name": "ONION TOMATO UTTAPPAM",
+      "quantity": 1,
+      "cost": 210.0
+    },
+    {
+      "name": "CURD RICE",
+      "quantity": 1,
+      "cost": 185.0
+    },
+    {
+      "name": "UPMA",
+      "quantity": 1,
+      "cost": 145.0
+    },
+    {
+      "name": "HALF VEGETABLE CHOWMEIN",
+      "quantity": 1,
+      "cost": 160.0
+    },
+    {
+      "name": "PRESH LIME SODA",
+      "quantity": 1,
+      "cost": 100.0
+    },
+    {
+      "name": "MINERAL WATER",
+      "quantity": 1,
+      "cost": 19.5
+    }
+  ],
+  "totals": {
+    "subtotal": 984.05,
+    "tax_total": 49.20,
+    "service_charge": 24.6,
+    "discount": null,
+    "grand_total": 1033.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "CGST2.5%",
+      "amount": 24.6
+    },
+    {
+      "name": "SGST2.5%",
+      "amount": 24.6
+    }
+  ],
+  "meta": {
+    "image": "r010.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

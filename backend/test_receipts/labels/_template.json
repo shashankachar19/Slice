@@ -1,0 +1,35 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "EXAMPLE ITEM",
+                      "quantity":  1,
+                      "cost":  199
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  null,
+                   "tax_total":  null,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  199
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "GST 5%",
+                              "amount":  0
+                          },
+                          {
+                              "name":  "GST 12%",
+                              "amount":  0
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r001.jpg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

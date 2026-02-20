@@ -1,0 +1,74 @@
+{
+  "items": [
+    {
+      "name": "VEG SPRING ROLL",
+      "quantity": 1,
+      "cost": 180.0
+    },
+    {
+      "name": "VEG DIWANI HANDI",
+      "quantity": 1,
+      "cost": 280.0
+    },
+    {
+      "name": "PANEER MULTANI",
+      "quantity": 1,
+      "cost": 220.0
+    },
+    {
+      "name": "BUTTER LACCHA PARATHA",
+      "quantity": 1,
+      "cost": 45.0
+    },
+    {
+      "name": "ROOMALI ROTI",
+      "quantity": 3,
+      "cost": 135.0
+    },
+    {
+      "name": "PUNJABI LASSI",
+      "quantity": 1,
+      "cost": 80.0
+    },
+    {
+      "name": "FRESH LIME WATER",
+      "quantity": 2,
+      "cost": 60.0
+    },
+    {
+      "name": "BOTTLED WATER",
+      "quantity": 1,
+      "cost": 20.0
+    }
+  ],
+  "totals": {
+    "subtotal": 1020.0,
+    "tax_total": 100.0,
+    "service_charge": 50.0,
+    "discount": null,
+    "grand_total": 1120
+  },
+  "tax_breakdown": [
+    {
+      "name": "GSTIN:27AGLPD2218E1ZT",
+      "amount": 50.0
+    },
+    {
+      "name": "CGST @2.5% 0n 1000 25.00",
+      "amount": 25.0
+    },
+    {
+      "name": "SGST @2.5%0n 1000 25.00",
+      "amount": 25.0
+    }
+  ],
+  "meta": {
+    "image": "r009.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

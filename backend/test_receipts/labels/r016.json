@@ -1,0 +1,74 @@
+{
+  "items": [
+    {
+      "name": "FLAVOURED MOJITO",
+      "quantity": 1,
+      "cost": 330.0
+    },
+    {
+      "name": "CUCUMBER MINT",
+      "quantity": 1,
+      "cost": 170.0
+    },
+    {
+      "name": "LONG ISLAND ELEC",
+      "quantity": 2,
+      "cost": 680.0
+    },
+    {
+      "name": "CRUNCHY SALAD",
+      "quantity": 1,
+      "cost": 160.0
+    },
+    {
+      "name": "ASSORTED SATAY",
+      "quantity": 1,
+      "cost": 260.0
+    },
+    {
+      "name": "TEQUILA CHICKEN",
+      "quantity": 1,
+      "cost": 320.0
+    },
+    {
+      "name": "FAJITAS CHICKEN",
+      "quantity": 1,
+      "cost": 300.0
+    },
+    {
+      "name": "SURF N TURF",
+      "quantity": 1,
+      "cost": 360.0
+    }
+  ],
+  "totals": {
+    "subtotal": 2580.0,
+    "tax_total": 692.13,
+    "service_charge": 258.0,
+    "discount": null,
+    "grand_total": 3280.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "VAT5.5 % 55.55",
+      "amount": 55.55
+    },
+    {
+      "name": "VAT14.5% 227.65",
+      "amount": 227.65
+    },
+    {
+      "name": "Service Tax 5.6x 158.93",
+      "amount": 158.93
+    }
+  ],
+  "meta": {
+    "image": "r016.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": true,
+      "double_checked": false
+    }
+  }
+}

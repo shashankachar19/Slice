@@ -1,0 +1,80 @@
+{
+  "items": [
+    {
+      "name": "VEG MANCHAW SO",
+      "quantity": 1,
+      "cost": 119.0
+    },
+    {
+      "name": "VEG SWEET CORN",
+      "quantity": 1,
+      "cost": 119.0
+    },
+    {
+      "name": "DAL TADKA",
+      "quantity": 1,
+      "cost": 215.0
+    },
+    {
+      "name": "JEERA RICE",
+      "quantity": 1,
+      "cost": 145.0
+    },
+    {
+      "name": "PLAIN PAPAD",
+      "quantity": 2,
+      "cost": 80.0
+    },
+    {
+      "name": "BAKED VEG",
+      "quantity": 1,
+      "cost": 270.0
+    },
+    {
+      "name": "MUSHROOM MATTA",
+      "quantity": 1,
+      "cost": 265.0
+    },
+    {
+      "name": "BUTTER TANDOOR",
+      "quantity": 1,
+      "cost": 27.0
+    },
+    {
+      "name": "MISSI ROTI",
+      "quantity": 1,
+      "cost": 30.0
+    },
+    {
+      "name": "GARLIC NAAN",
+      "quantity": 1,
+      "cost": 45.0
+    }
+  ],
+  "totals": {
+    "subtotal": null,
+    "tax_total": 66.76,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 1381.00
+  },
+  "tax_breakdown": [
+    {
+      "name": "CGST2.52.5 32.88",
+      "amount": 32.88
+    },
+    {
+      "name": "SGST2.52.5 32.88",
+      "amount": 32.88
+    }
+  ],
+  "meta": {
+    "image": "r014.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

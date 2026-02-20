@@ -1,0 +1,60 @@
+{
+  "items": [
+        {
+      "name": "MYSORE DOSA",
+      "quantity": 1,
+      "cost": 75.0
+    },
+    {
+      "name": "BTR SADA DOSA",
+      "quantity": 1,
+      "cost": 85.0
+    },
+    {
+      "name": "SPL PAV BHAJI",
+      "quantity": 1,
+      "cost": 145.0
+    },
+    {
+      "name": "EXTRA PAV (1PC)",
+      "quantity": 2,
+      "cost": 40.0
+    },
+    {
+      "name": "MAKAI CHEWOA BHEL",
+      "quantity": 2,
+      "cost": 190.0
+    },
+    {
+      "name": "DAHI BATATA PURI",
+      "quantity": 1,
+      "cost": 90.0
+    }
+  ],
+  "totals": {
+    "subtotal": null,
+    "tax_total": null,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 625.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "GST 5%",
+      "amount": 0.0
+    },
+    {
+      "name": "GST 12%",
+      "amount": 0.0
+    }
+  ],
+  "meta": {
+    "image": "r008.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": true,
+      "double_checked": true
+    }
+  }
+}

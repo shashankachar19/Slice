@@ -1,0 +1,55 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "MEDU WADA",
+                      "quantity":  1,
+                      "cost":  65.0
+                  },
+                  {
+                      "name":  "SADA DOSA",
+                      "quantity":  1,
+                      "cost":  70.0
+                  },
+                  {
+                      "name":  "MSL DOSA",
+                      "quantity":  1,
+                      "cost":  80.0
+                  },
+                  {
+                      "name":  "ONION RAVA DOSA",
+                      "quantity":  2,
+                      "cost":  160.0
+                  },
+                  {
+                      "name":  "CHEESE TOAST",
+                      "quantity":  2,
+                      "cost":  230.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  605.0,
+                   "tax_total":  30.24,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  635
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "SGST 2.5%",
+                              "amount":  15.12
+                          },
+                          {
+                              "name":  "CGST 2.5%",
+                              "amount":  15.12
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r024.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

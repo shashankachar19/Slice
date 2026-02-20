@@ -1,0 +1,50 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "DHABA CHICKEN TIKKA",
+                      "quantity":  1,
+                      "cost":  345.0
+                  },
+                  {
+                      "name":  "BUTTER CHICKEN",
+                      "quantity":  1,
+                      "cost":  425.0
+                  },
+                  {
+                      "name":  "GARLIC NAAN",
+                      "quantity":  1,
+                      "cost":  95.0
+                  },
+                  {
+                      "name":  "BUTTER NAAN",
+                      "quantity":  1,
+                      "cost":  85.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  950.0,
+                   "tax_total":  87.87,
+                   "service_charge":  null,
+                   "discount":  475.0,
+                   "grand_total":  563.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "VAT 12.5%",
+                              "amount":  59.37
+                          },
+                          {
+                              "name":  "SERVICE TAX 6%",
+                              "amount":  28.5
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r030.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

@@ -1,0 +1,60 @@
+{
+  "items": [
+    {
+      "name": "WATER BOTTLE",
+      "quantity": 1,
+      "cost": 30.0
+    },
+    {
+      "name": "CRISPY CHILLL BABY CORN",
+      "quantity": 1,
+      "cost": 170.0
+    },
+    {
+      "name": "KASHMIRI PULAO",
+      "quantity": 1,
+      "cost": 130.0
+    },
+    {
+      "name": "KADAL CHICKEN",
+      "quantity": 1,
+      "cost": 250.0
+    },
+    {
+      "name": "MUTTON BIRYANI",
+      "quantity": 1,
+      "cost": 220.0
+    },
+    {
+      "name": "SOFT DRINKS",
+      "quantity": 1,
+      "cost": 40.0
+    }
+  ],
+  "totals": {
+    "subtotal": 840.0,
+    "tax_total": null,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 840.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "GST 5%",
+      "amount": 0.0
+    },
+    {
+      "name": "GST 12%",
+      "amount": 0.0
+    }
+  ],
+  "meta": {
+    "image": "r021.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

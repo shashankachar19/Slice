@@ -1,0 +1,60 @@
+{
+  "items": [
+    {
+      "name": "HOUSE WINE WHITE GLASS",
+      "quantity": 1,
+      "cost": 3.0
+    },
+    {
+      "name": "VEGETABLE SHORBA",
+      "quantity": 1,
+      "cost": 2.5
+    },
+    {
+      "name": "GARLIC NAAN",
+      "quantity": 1,
+      "cost": 2.0
+    },
+    {
+      "name": "KARI PAKORA",
+      "quantity": 1,
+      "cost": 4.5
+    },
+    {
+      "name": "ANGKOR BEER WITH MEAI",
+      "quantity": 1,
+      "cost": 0.5
+    },
+    {
+      "name": "ANGKOR BEER WITH MEAL",
+      "quantity": 1,
+      "cost": 0.5
+    }
+  ],
+  "totals": {
+    "subtotal": 13.0,
+    "tax_total": null,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 13.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "GST 5%",
+      "amount": 0.0
+    },
+    {
+      "name": "GST 12%",
+      "amount": 0.0
+    }
+  ],
+  "meta": {
+    "image": "r011.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

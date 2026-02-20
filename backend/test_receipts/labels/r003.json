@@ -1,0 +1,61 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "TOMATO BASIL SOUP",
+                      "quantity":  1,
+                      "cost":  199.0
+                  },
+                  {
+                      "name":  "B10 SEV PURI TACOS",
+                      "quantity":  1,
+                      "cost":  225.0
+                  },
+                  {
+                      "name":  "CRISPY ALOO CUP",
+                      "quantity":  1,
+                      "cost":  250.0
+                  },
+                  {
+                      "name":  "D4 STUFFED PANEER CHILLA",
+                      "quantity":  1,
+                      "cost":  275.0
+                  },
+                  {
+                      "name":  "D7 HANDWA PIZZA",
+                      "quantity":  1,
+                      "cost":  300.0
+                  },
+                  {
+                      "name":  "A6 DAL PAKWAAN",
+                      "quantity":  1,
+                      "cost":  250.0
+                  },
+                  {
+                      "name":  "A8 DABELI BRUSCHETTA",
+                      "quantity":  1,
+                      "cost":  275.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  1774.0,
+                   "tax_total":  33.0,
+                   "service_charge":  177.0,
+                   "discount":  887.0,
+                   "grand_total":  1108.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "GSTNO27ABCFA5632P1Z5 09:33PM",
+                              "amount":  44.35
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r003.jpg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

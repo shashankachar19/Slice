@@ -1,0 +1,73 @@
+{
+  "items": [
+    {
+      "name": "ALOO PYAAZ PRANTHA",
+      "quantity": 1,
+      "cost": 55.0
+    },
+    {
+      "name": "ALU PRANTHA",
+      "quantity": 1,
+      "cost": 55.0
+    },
+    {
+      "name": "DAL MAKHNI",
+      "quantity": 1,
+      "cost": 150.0
+    },
+    {
+      "name": "SWEET LASSI",
+      "quantity": 2,
+      "cost": 120.0
+    },
+    {
+      "name": "KINLEY WATER",
+      "quantity": 1,
+      "cost": 22.1
+    },
+    {
+      "name": "PLAIN ROTI",
+      "quantity": 1,
+      "cost": 18.0
+    },
+    {
+      "name": "KULLAD CHAI",
+      "quantity": 1,
+      "cost": 35.0
+    }
+  ],
+  "totals": {
+    "subtotal": 635.10,
+    "tax_total":114.32 ,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 749.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "GSTIN06ABIFS3901K1Z3",
+      "amount": 3.0
+    },
+    {
+      "name": "Add SGST9.000%on635.10 57.16",
+      "amount": 57.16
+    },
+    {
+      "name": "Add CGST9.000%)on 635.10 57.16",
+      "amount": 57.16
+    },
+    {
+      "name": "Amount Incl of All Taxes 749.00",
+      "amount": 749.0
+    }
+  ],
+  "meta": {
+    "image": "r019.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

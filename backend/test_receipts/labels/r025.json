@@ -1,0 +1,50 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "PANEER BUTTER MASALA",
+                      "quantity":  1,
+                      "cost":  180.0
+                  },
+                  {
+                      "name":  "VEG BIRYANI",
+                      "quantity":  1,
+                      "cost":  150.0
+                  },
+                  {
+                      "name":  "TANDOORI ROTI",
+                      "quantity":  3,
+                      "cost":  60.0
+                  },
+                  {
+                      "name":  "GULAB JAMUN",
+                      "quantity":  2,
+                      "cost":  100.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  null,
+                   "tax_total":  24.5,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  514.5
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "CGST 2.5%",
+                              "amount":  12.25
+                          },
+                          {
+                              "name":  "SGST 2.5%",
+                              "amount":  12.25
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r025.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

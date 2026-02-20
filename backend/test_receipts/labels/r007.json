@@ -1,0 +1,64 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "ROASTED PAPAD",
+                      "quantity":  3,
+                      "cost":  57.0
+                  },
+                  {
+                      "name":  "GREEN SALAD",
+                      "quantity":  1,
+                      "cost":  65.0
+                  },
+                  {
+                      "name":  "DAL FRY",
+                      "quantity":  1,
+                      "cost":  138.0
+                  },
+                  {
+                      "name":  "PANEER BTR MSL",
+                      "quantity":  1,
+                      "cost":  212.0
+                  },
+                  {
+                      "name":  "PLAIN ROTI",
+                      "quantity":  2,
+                      "cost":  54.0
+                  },
+                  {
+                      "name":  "TAVA CHAPATI PL",
+                      "quantity":  1,
+                      "cost":  40.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  566.0,
+                   "tax_total":  28.30,
+                   "service_charge":  14.15,
+                   "discount":  null,
+                   "grand_total":  594.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "CGST @2.507ON 566.00 14.15",
+                              "amount":  14.15
+                          },
+                          {
+                              "name":  "SGST 2.5070N 566.00 14.15",
+                              "amount":  14.15
+                          },
+                          {
+                              "name":  "TOTAL GST 28.30",
+                              "amount":  28.3
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r007.jpg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

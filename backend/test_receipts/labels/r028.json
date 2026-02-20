@@ -1,0 +1,55 @@
+{
+  "items": [
+    {
+      "name": "VEG THALI",
+      "quantity": 1,
+      "cost": 349.0
+    },
+    {
+      "name": "MUTTON FRY",
+      "quantity": 1,
+      "cost": 450.0
+    },
+    {
+      "name": "PRAWN DRY",
+      "quantity": 1,
+      "cost": 450.0
+    },
+    {
+      "name": "BUTTER MILK",
+      "quantity": 1,
+      "cost": 70.0
+    },
+    {
+      "name": "CHICKEN GRAVY",
+      "quantity": 1,
+      "cost": 370.0
+    }
+  ],
+  "totals": {
+    "subtotal": 1689.0,
+    "tax_total": 173.11,
+    "service_charge": 84.45,
+    "discount": null,
+    "grand_total": 1862.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "SGST 2.5%",
+      "amount": 44.33
+    },
+    {
+      "name": "CGST 2.5%",
+      "amount": 44.33
+    }
+  ],
+  "meta": {
+    "image": "r028.jpeg",
+    "status": "done",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": true,
+      "double_checked": true
+    }
+  }
+}

@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slice Demo UI</title>
+  <style>
+    :root { --bg:#f5f7fb; --card:#fff; --line:#d9e0ea; --text:#1e2a36; --accent:#0f766e; --danger:#b91c1c; }
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 1080px; margin: 16px auto; padding: 0 12px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    h1 { margin: 0 0 10px; font-size: 22px; }
+    h2 { margin: 0 0 10px; font-size: 17px; }
+    .row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; align-items: center; }
+    .row > * { grid-column: span 12; }
+    @media (min-width: 860px) {
+      .c3 { grid-column: span 3; } .c4 { grid-column: span 4; } .c6 { grid-column: span 6; } .c8 { grid-column: span 8; }
+    }
+    input, select, button, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line); }
+    button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
+    button.secondary { background: #334155; }
+    .muted { color: #64748b; font-size: 13px; }
+    .pill { display: inline-block; border-radius: 999px; padding: 3px 9px; font-size: 12px; background: #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; font-size: 14px; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #0b1220; color: #d6e1f0; padding: 10px; border-radius: 10px; font-size: 12px; }
+    #qrBox { max-width: 220px; min-height: 220px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: 10px; padding: 8px; }
+    .statGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+    .stat { background:#eef2f7; border:1px solid var(--line); border-radius:10px; padding:8px; font-size:13px; }
+    .stat b { display:block; font-size:16px; margin-top:2px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Slice Receipt Splitter</h1>
+      <div class="muted">Upload -> Review -> Create Lobby -> Share Link/QR -> Friends Join on Phone -> Claim -> Summary</div>
+    </div>
+
+    <div id="scanCard" class="card">
+      <h2>1) Scan Bill</h2>
+      <div class="row">
+        <input id="file" class="c8" type="file" accept="image/*" />
+        <button id="scanBtn" class="c4">Scan Receipt</button>
+      </div>
+      <div id="scanMeta" class="muted" style="margin-top:8px;"></div>
+      <div id="needsReview" style="margin-top:10px;"></div>
+    </div>
+
+    <div id="itemsCard" class="card">
+      <h2>2) Items & Categories</h2>
+      <table id="itemsTable">
+        <thead>
+          <tr><th>Name</th><th>Qty</th><th>Unit</th><th>Cost</th><th>Category</th><th>Other</th><th>Save</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="createCard" class="card">
+      <h2>3) Create Lobby</h2>
+      <div class="row">
+        <input id="lobbyName" class="c4" placeholder="Lobby name" value="Demo Dinner" />
+        <input id="passcode" class="c4" placeholder="Passcode" value="1234" />
+        <button id="createLobbyBtn" class="c4">Create Lobby From Items</button>
+      </div>
+      <div id="lobbyMeta" style="margin-top:8px;" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <h2>4) Share Lobby (Phone)</h2>
+      <div class="row">
+        <input id="hostBase" class="c8" placeholder="Host for phone, e.g. http://192.168.1.12:8000" />
+        <button id="makeLinkBtn" class="c4 secondary">Build Share Link</button>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <input id="joinLink" class="c8" readonly />
+        <button id="copyLinkBtn" class="c2 secondary">Copy</button>
+        <button id="shareLinkBtn" class="c2">Share</button>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div id="qrBox" class="c4"><span class="muted">QR appears here</span></div>
+        <div class="c8 muted">
+          Phone setup:
+          <br />1) Run backend with <code>uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload</code>
+          <br />2) Put your laptop IP in host field (e.g. <code>http://192.168.1.12:8000</code>)
+          <br />3) Scan QR from phone on same Wi-Fi
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="joinCard">
+      <h2>5) Join & Claim</h2>
+      <div class="row" style="margin-bottom:8px;">
+        <input id="lobbyId" class="c4" placeholder="Lobby ID" />
+        <input id="joinName" class="c4" placeholder="Your name" />
+        <button id="joinBtn" class="c4 secondary">Join Lobby</button>
+      </div>
+      <div class="row" style="margin-bottom:8px;">
+        <button id="refreshBtn" class="c4">Refresh Summary</button>
+        <select id="claimUser" class="c3"></select>
+        <select id="claimItem" class="c3"></select>
+        <input id="claimQty" class="c2" type="number" min="0.1" step="0.1" value="1" />
+      </div>
+      <button id="claimBtn">Claim Item</button>
+      <div id="participants" style="margin-top:8px;" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <h2>6) Summary</h2>
+      <div id="summaryStats" class="statGrid"></div>
+      <pre id="summaryOut">{}</pre>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script>
+    let scanItems = [];
+    let lobbyId = "";
+    let participants = [];
+    let joinMode = false;
+    let autoRefreshHandle = null;
+    const $ = (id) => document.getElementById(id);
+
+    function show(msg, isErr=false) {
+      $("scanMeta").innerHTML = isErr ? `<span style="color:#b91c1c">${msg}</span>` : msg;
+    }
+
+    function currentPasscode() {
+      return $("passcode").value.trim();
+    }
+
+    function normalizeHost(input) {
+      const raw = (input || "").trim();
+      if (!raw) return window.location.origin;
+      return raw.endsWith("/") ? raw.slice(0, -1) : raw;
+    }
+
+    function buildJoinLink() {
+      if (!lobbyId) return "";
+      const base = normalizeHost($("hostBase").value);
+      return `${base}/join?join=1&lobby_id=${encodeURIComponent(lobbyId)}&passcode=${encodeURIComponent(currentPasscode())}`;
+    }
+
+    function renderQr(link) {
+      const qr = $("qrBox");
+      qr.innerHTML = "";
+      if (!link) {
+        qr.innerHTML = `<span class="muted">QR appears here</span>`;
+        return;
+      }
+      if (window.QRCode && window.QRCode.toCanvas) {
+        const canvas = document.createElement("canvas");
+        qr.appendChild(canvas);
+        window.QRCode.toCanvas(canvas, link, { width: 200 }, (err) => {
+          if (err) qr.innerHTML = `<span class="muted">QR failed. Use link copy.</span>`;
+        });
+      } else {
+        qr.innerHTML = `<span class="muted">QR library unavailable. Use link copy.</span>`;
+      }
+    }
+
+    function renderShareArtifacts() {
+      const link = buildJoinLink();
+      $("joinLink").value = link;
+      renderQr(link);
+    }
+
+    function renderNeedsReview(needsReview) {
+      if (!needsReview || !needsReview.length) {
+        $("needsReview").innerHTML = `<span class="pill">No review flags</span>`;
+        return;
+      }
+      $("needsReview").innerHTML =
+        `<div class="pill" style="background:#fee2e2;color:#991b1b">${needsReview.length} lines need review</div>` +
+        "<ul>" + needsReview.map(n => `<li>${n.line} (${n.reason})</li>`).join("") + "</ul>";
+    }
+
+    function renderItems() {
+      const body = $("itemsTable").querySelector("tbody");
+      body.innerHTML = "";
+      for (const item of scanItems) {
+        const opts = (item.other_category_options || []).map(o => `<option value="${o}">${o}</option>`).join("");
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.name}<div class="muted">${item.id}</div></td>
+          <td>${item.quantity}</td>
+          <td>${item.unit_price}</td>
+          <td>${item.cost}</td>
+          <td>
+            <select data-role="cat" data-id="${item.id}">
+              <option value="veg" ${item.category==="veg"?"selected":""}>veg</option>
+              <option value="non_veg" ${item.category==="non_veg"?"selected":""}>non_veg</option>
+              <option value="drinks" ${item.category==="drinks"?"selected":""}>drinks</option>
+              <option value="other" ${item.category==="other"?"selected":""}>other</option>
+            </select>
+          </td>
+          <td>
+            <select data-role="sub" data-id="${item.id}" ${item.category==="other"?"":"disabled"}>
+              <option value="">--select--</option>${opts}
+            </select>
+          </td>
+          <td><button data-role="save" data-id="${item.id}" class="secondary">Save</button></td>
+        `;
+        body.appendChild(tr);
+      }
+      renderClaimItems();
+    }
+
+    function renderClaimItems() {
+      $("claimItem").innerHTML = scanItems.map(i => `<option value="${i.id}">${i.name} (qty ${i.quantity}, cost ${i.cost})</option>`).join("");
+    }
+
+    function renderUsers() {
+      $("claimUser").innerHTML = participants.map(p => `<option value="${p.user_id}">${p.user_name}</option>`).join("");
+      $("participants").textContent = participants.length ? `Users: ${participants.map(p=>`${p.user_name} (${p.user_id})`).join(", ")}` : "No users joined";
+    }
+
+    function renderSummaryStats(summary) {
+      if (!summary) return;
+      const grand = Number(summary.grand_total || 0).toFixed(2);
+      const claimed = Number(summary.claimed_total || 0).toFixed(2);
+      const unclaimed = Number(summary.unclaimed_total || 0).toFixed(2);
+      $("summaryStats").innerHTML = `
+        <div class="stat">Grand Total<b>${grand}</b></div>
+        <div class="stat">Claimed<b>${claimed}</b></div>
+        <div class="stat">Unclaimed<b>${unclaimed}</b></div>
+      `;
+    }
+
+    async function loadLobbyItemsIfNeeded() {
+      lobbyId = $("lobbyId").value.trim() || lobbyId;
+      if (!lobbyId || !currentPasscode()) return;
+      try {
+        const data = await api(`/lobby/${lobbyId}/items?lobby_passcode=${encodeURIComponent(currentPasscode())}`);
+        if (Array.isArray(data.items) && data.items.length) {
+          scanItems = data.items;
+          renderClaimItems();
+        }
+      } catch (_) {}
+    }
+
+    async function api(path, method="GET", body=null) {
+      const res = await fetch(path, {
+        method,
+        headers: body ? {"Content-Type": "application/json"} : undefined,
+        body: body ? JSON.stringify(body) : undefined
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || data.error || JSON.stringify(data));
+      return data;
+    }
+
+    $("scanBtn").addEventListener("click", async () => {
+      const file = $("file").files[0];
+      if (!file) return show("Please choose an image first", true);
+      const fd = new FormData();
+      fd.append("file", file);
+      try {
+        const res = await fetch("/scan-bill?include_debug=false&use_hybrid=true", { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || "Scan failed");
+        scanItems = data.items || [];
+        show(`Scanned ${scanItems.length} items | source=${data.source} | quality=${data.confidence_summary?.quality_score ?? "n/a"}`);
+        renderNeedsReview(data.needs_review || []);
+        renderItems();
+      } catch (e) {
+        show(e.message, true);
+      }
+    });
+
+    $("createLobbyBtn").addEventListener("click", async () => {
+      if (!scanItems.length) return alert("Scan receipt first");
+      try {
+        const data = await api("/lobby/create", "POST", {
+          lobby_name: $("lobbyName").value.trim() || "Demo Dinner",
+          lobby_passcode: currentPasscode(),
+          items: scanItems
+        });
+        lobbyId = data.lobby_id;
+        $("lobbyId").value = lobbyId;
+        $("lobbyMeta").textContent = `Lobby created: ${lobbyId}`;
+        renderShareArtifacts();
+      } catch (e) {
+        $("lobbyMeta").innerHTML = `<span style="color:#b91c1c">${e.message}</span>`;
+      }
+    });
+
+    $("makeLinkBtn").addEventListener("click", renderShareArtifacts);
+
+    $("copyLinkBtn").addEventListener("click", async () => {
+      if (!$("joinLink").value) return;
+      try {
+        await navigator.clipboard.writeText($("joinLink").value);
+        $("copyLinkBtn").textContent = "Copied";
+        setTimeout(() => $("copyLinkBtn").textContent = "Copy", 900);
+      } catch (e) {
+        alert("Copy failed. You can copy manually.");
+      }
+    });
+
+    $("shareLinkBtn").addEventListener("click", async () => {
+      const link = $("joinLink").value;
+      if (!link) return;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "Join my Slice lobby", url: link });
+        } catch (_) {}
+      } else {
+        alert("Share API unavailable. Use Copy.");
+      }
+    });
+
+    $("joinBtn").addEventListener("click", async () => {
+      lobbyId = $("lobbyId").value.trim() || lobbyId;
+      if (!lobbyId) return alert("Enter lobby ID");
+      const name = $("joinName").value.trim();
+      if (!name) return alert("Enter your name");
+      try {
+        const data = await api(`/lobby/${lobbyId}/join`, "POST", {
+          user_name: name,
+          lobby_passcode: currentPasscode()
+        });
+        participants.push(data);
+        renderUsers();
+        renderShareArtifacts();
+        localStorage.setItem(`slice_joined_${lobbyId}`, JSON.stringify(data));
+        await loadLobbyItemsIfNeeded();
+        $("refreshBtn").click();
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    $("claimBtn").addEventListener("click", async () => {
+      lobbyId = $("lobbyId").value.trim() || lobbyId;
+      if (!lobbyId) return alert("Enter/Create lobby first");
+      try {
+        await api(`/lobby/${lobbyId}/claim`, "POST", {
+          user_id: $("claimUser").value,
+          item_id: $("claimItem").value,
+          quantity: Number($("claimQty").value),
+          lobby_passcode: currentPasscode()
+        });
+        $("refreshBtn").click();
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    $("refreshBtn").addEventListener("click", async () => {
+      lobbyId = $("lobbyId").value.trim() || lobbyId;
+      if (!lobbyId) return alert("Enter/Create lobby first");
+      try {
+        const data = await api(`/lobby/${lobbyId}/summary?lobby_passcode=${encodeURIComponent(currentPasscode())}`);
+        renderSummaryStats(data);
+        $("summaryOut").textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    $("itemsTable").addEventListener("change", (ev) => {
+      if (ev.target.dataset.role !== "cat") return;
+      const sub = ev.target.closest("tr").querySelector('select[data-role="sub"]');
+      sub.disabled = ev.target.value !== "other";
+    });
+
+    $("itemsTable").addEventListener("click", async (ev) => {
+      const btn = ev.target.closest('button[data-role="save"]');
+      if (!btn) return;
+      lobbyId = $("lobbyId").value.trim() || lobbyId;
+      if (!lobbyId) return alert("Create lobby first before saving category");
+      const row = btn.closest("tr");
+      const category = row.querySelector('select[data-role="cat"]').value;
+      const otherSub = row.querySelector('select[data-role="sub"]').value || null;
+      try {
+        const data = await api(`/lobby/${lobbyId}/item-category`, "POST", {
+          item_id: btn.dataset.id,
+          category,
+          other_subcategory: category === "other" ? otherSub : null,
+          lobby_passcode: currentPasscode()
+        });
+        const idx = scanItems.findIndex(x => x.id === btn.dataset.id);
+        if (idx >= 0) scanItems[idx] = { ...scanItems[idx], ...data.item };
+        btn.textContent = "Saved";
+        setTimeout(() => btn.textContent = "Save", 900);
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    (function applyJoinFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const pLobby = params.get("lobby_id");
+      const pPass = params.get("passcode");
+      joinMode = params.get("join") === "1";
+      if (pLobby) {
+        lobbyId = pLobby;
+        $("lobbyId").value = pLobby;
+        $("lobbyMeta").textContent = `Loaded lobby from link: ${pLobby}`;
+      }
+      if (pPass) $("passcode").value = pPass;
+      if (joinMode) {
+        $("scanCard").style.display = "none";
+        $("itemsCard").style.display = "none";
+        $("createCard").style.display = "none";
+        document.getElementById("joinCard").scrollIntoView({ behavior: "smooth" });
+      }
+      $("hostBase").value = window.location.origin;
+      renderShareArtifacts();
+      loadLobbyItemsIfNeeded();
+      if (joinMode) {
+        autoRefreshHandle = setInterval(() => {
+          $("refreshBtn").click();
+        }, 5000);
+      }
+    })();
+  </script>
+</body>
+</html>

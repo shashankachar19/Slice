@@ -1,0 +1,65 @@
+{
+  "items": [
+    {
+      "name": "FILTER COFFEE",
+      "quantity": 1,
+      "cost": 135.0
+    },
+    {
+      "name": "FILTER COFFEE",
+      "quantity": 1,
+      "cost": 135.0
+    },
+    {
+      "name": "PODI IDLI",
+      "quantity": 1,
+      "cost": 270.0
+    },
+    {
+      "name": "VAZHAIPOO VADAI",
+      "quantity": 1,
+      "cost": 297.0
+    },
+    {
+      "name": "VAZHAIKAI BAJJI",
+      "quantity": 1,
+      "cost": 225.0
+    },
+    {
+      "name": "VEEN WATER BOTTLE",
+      "quantity": 1,
+      "cost": 162.0
+    },
+    {
+      "name": "PARUTHIPAAL HALWA",
+      "quantity": 1,
+      "cost": 207.0
+    }
+  ],
+  "totals": {
+    "subtotal": 1431.0,
+    "tax_total": 71.56,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 1503.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "CGST 2.50%",
+      "amount": 35.78
+    },
+    {
+      "name": "SGST 2.50%",
+      "amount": 35.78
+    }
+  ],
+  "meta": {
+    "image": "r034.jpeg",
+    "status": "done",
+    "checklist": {
+      "items_done": true,
+      "grand_total_done": true,
+      "double_checked": true
+    }
+  }
+}

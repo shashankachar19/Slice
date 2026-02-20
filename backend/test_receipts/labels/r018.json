@@ -1,0 +1,51 @@
+{
+  "items": [
+    {
+      "name": "CHICKEN MALAI TIKKA",
+      "quantity": 1,
+      "cost": 240.0
+    },
+    {
+      "name": "STUFFED PARATHA ",
+      "quantity": 1,
+      "cost": 80.0
+    },
+    {
+      "name": "GULAB JAMUN WITH ICE",
+      "quantity": 1,
+      "cost": 160.0
+    },
+    {
+      "name": "GREY GOOSE",
+      "quantity": 1,
+      "cost": 190.0
+    },
+    {
+      "name": "GLASS WINE",
+      "quantity": 3,
+      "cost": 450.0
+    }
+  ],
+  "totals": {
+    "subtotal": 1120.0,
+    "tax_total": 78.4,
+    "service_charge": null,
+    "discount": 0.0,
+    "grand_total": 1198.4
+  },
+  "tax_breakdown": [
+    {
+      "name": "VAT 7% 78.40",
+      "amount": 78.4
+    }
+  ],
+  "meta": {
+    "image": "r018.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": false,
+      "grand_total_done": true,
+      "double_checked": false
+    }
+  }
+}

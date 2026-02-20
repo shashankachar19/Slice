@@ -1,0 +1,61 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "DAAL TADKA",
+                      "quantity":  2,
+                      "cost":  470.0
+                  },
+                  {
+                      "name":  "PANEER BUTTER M",
+                      "quantity":  1,
+                      "cost":  285.0
+                  },
+                  {
+                      "name":  "ALOO METHI",
+                      "quantity":  1,
+                      "cost":  210.0
+                  },
+                  {
+                      "name":  "PHULKA",
+                      "quantity":  6,
+                      "cost":  240.0
+                  },
+                  {
+                      "name":  "BUTTER NAAN",
+                      "quantity":  1,
+                      "cost":  75.0
+                  },
+                  {
+                      "name":  "TANDOOR ROTI",
+                      "quantity":  1,
+                      "cost":  55.0
+                  },
+                  {
+                      "name":  "MINERAL WATER 1L",
+                      "quantity":  1,
+                      "cost":  25.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  1360.0,
+                   "tax_total":  95.2,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  1455.2
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "TAX 7%",
+                              "amount":  95.2
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r001.jpg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

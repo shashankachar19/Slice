@@ -1,0 +1,45 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "BUFFET ON THE TABLE",
+                      "quantity":  2,
+                      "cost":  1198.0
+                  },
+                  {
+                      "name":  "TOM YUM PRAWNS SOUP",
+                      "quantity":  1,
+                      "cost":  215.0
+                  },
+                  {
+                      "name":  "DIET COKE",
+                      "quantity":  1,
+                      "cost":  110.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  1523.0,
+                   "tax_total":  274.2,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  1797.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "SGST 9.00%",
+                              "amount":  137.1
+                          },
+                          {
+                              "name":  "CGST 9.00%",
+                              "amount":  137.1
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r035.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

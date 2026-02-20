@@ -1,0 +1,70 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "MUTTON GHEE ROAST",
+                      "quantity":  1,
+                      "cost":  625.0
+                  },
+                  {
+                      "name":  "TAMATAR KI CHAAT",
+                      "quantity":  1,
+                      "cost":  425.0
+                  },
+                  {
+                      "name":  "AAM PANNA",
+                      "quantity":  1,
+                      "cost":  200.0
+                  },
+                  {
+                      "name":  "JAMUN BUTER CHX",
+                      "quantity":  1,
+                      "cost":  795.0
+                  },
+                  {
+                      "name":  "KER SANGRI KOFTE",
+                      "quantity":  1,
+                      "cost":  595.0
+                  },
+                  {
+                      "name":  "LAL MAAS",
+                      "quantity":  1,
+                      "cost":  675.0
+                  },
+                  {
+                      "name":  "MALABAR PARATHA",
+                      "quantity":  2,
+                      "cost":  290.0
+                  },
+                  {
+                      "name":  "TANDOORI ROTI",
+                      "quantity":  1,
+                      "cost":  145.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  3750.0,
+                   "tax_total":  206.26,
+                   "service_charge":  375.0,
+                   "discount":  null,
+                   "grand_total":  4331.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "SGST 2.5%",
+                              "amount":  103.13
+                          },
+                          {
+                              "name":  "CGST 2.5%",
+                              "amount":  103.13
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r032.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

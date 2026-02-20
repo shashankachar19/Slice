@@ -1,0 +1,70 @@
+{
+  "items": [
+    {
+      "name": "JEERA RICE",
+      "quantity": 1,
+      "cost": 77.0
+    },
+    {
+      "name": "TAWA ROTI",
+      "quantity": 4,
+      "cost": 120.0
+    },
+    {
+      "name": "DAL TADKA",
+      "quantity": 1,
+      "cost": 115.0
+    },
+    {
+      "name": "CHILLI PANEER DRY",
+      "quantity": 1,
+      "cost": 155.0
+    },
+    {
+      "name": "KADAK TEA",
+      "quantity": 1,
+      "cost": 65.0
+    },
+    {
+      "name": "CHICKEN CHETTINAD",
+      "quantity": 1,
+      "cost": 170.0
+    },
+    {
+      "name": "GARLIC NAAN",
+      "quantity": 2,
+      "cost": 60.0
+    },
+    {
+      "name": "WATER DASAMINI 1.5 LTR",
+      "quantity": 1,
+      "cost": 50.0
+    }
+  ],
+  "totals": {
+    "subtotal": null,
+    "tax_total": null,
+    "service_charge": null,
+    "discount": null,
+    "grand_total": 872.0
+  },
+  "tax_breakdown": [
+    {
+      "name": "GST 5%",
+      "amount": 0.0
+    },
+    {
+      "name": "GST 12%",
+      "amount": 0.0
+    }
+  ],
+  "meta": {
+    "image": "r020.jpg",
+    "status": "draft_auto",
+    "checklist": {
+      "items_done": false,
+      "grand_total_done": false,
+      "double_checked": false
+    }
+  }
+}

@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+paddlepaddle==2.6.2
+paddleocr>=2.7.0,<2.8.0
+numpy==1.26.4
+opencv-python==4.6.0.66
+Pillow==10.3.0
+shapely<2.0.0
+pyclipper
+scipy

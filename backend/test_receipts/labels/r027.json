@@ -1,0 +1,73 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "LAHORI MURGH TANDOORI",
+                      "quantity":  1,
+                      "cost":  180.0
+                  },
+                  {
+                      "name":  "TSF PLATTER PANEER AATI",
+                      "quantity":  2,
+                      "cost":  300.0
+                  },
+                  {
+                      "name":  "PAPAD",
+                      "quantity":  5,
+                      "cost":  75.0
+                  },
+                  {
+                      "name":  "ASSORTED VEG PLATTER",
+                      "quantity":  2,
+                      "cost":  500.0
+                  },
+                  {
+                      "name":  "TSF PLATTER KADHAI PANE",
+                      "quantity":  2,
+                      "cost":  300.0
+                  },
+                  {
+                      "name":  "CHOICE OF JUICE",
+                      "quantity":  4,
+                      "cost":  160.0
+                  },
+                  {
+                      "name":  "AERATED WATER",
+                      "quantity":  2,
+                      "cost":  60.0
+                  },
+                  {
+                      "name":  "BOTTLED WATER",
+                      "quantity":  3,
+                      "cost":  36.0
+                  },
+                  {
+                      "name":  "PREMIUM WHISKY",
+                      "quantity":  4,
+                      "cost":  100.0
+                  },
+                  {
+                      "name":  "BEER BOTTLE",
+                      "quantity":  5,
+                      "cost":  300.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  2011.0,
+                   "tax_total":  null,
+                   "service_charge":  201.1,
+                   "discount":  null,
+                   "grand_total":  2212.1
+               },
+    "tax_breakdown":  [
+
+                      ],
+    "meta":  {
+                 "image":  "r027.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

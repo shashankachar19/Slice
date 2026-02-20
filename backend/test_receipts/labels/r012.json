@@ -1,0 +1,59 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "SIKANDARI PANEER",
+                      "quantity":  1,
+                      "cost":  289.0
+                  },
+                  {
+                      "name":  "VEG BANCHOW SOUP",
+                      "quantity":  2,
+                      "cost":  238.0
+                  },
+                  {
+                      "name":  "MARGISI KOFTA",
+                      "quantity":  1,
+                      "cost":  275.0
+                  },
+                  {
+                      "name":  "BUTTER KULCHA",
+                      "quantity":  1,
+                      "cost":  55.0
+                  },
+                  {
+                      "name":  "ROOMALI ROTI PLAIN",
+                      "quantity":  2,
+                      "cost":  120.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  977.0,
+                   "tax_total":  74.5,
+                   "service_charge":  24.42,
+                   "discount":  0.50,
+                   "grand_total":  1051.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "SGST 2.5%",
+                              "amount":  25.04
+                          },
+                          {
+                              "name":  "CGST 2.5%",
+                              "amount":  25.04
+                          },
+                          {
+                              "name":  "SC 2.5%",
+                              "amount":  24.42
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r012.jpg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}

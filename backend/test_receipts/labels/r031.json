@@ -1,0 +1,54 @@
+﻿{
+    "items":  [
+                  {
+                      "name":  "CHILLI GARLIC NOODLE",
+                      "quantity":  1,
+                      "cost":  155.0
+                  },
+                  {
+                      "name":  "CHILLI GARLIC NOODLE",
+                      "quantity":  1,
+                      "cost":  175.0
+                  },
+                  {
+                      "name":  "DRUMS OF HEAVEN",
+                      "quantity":  1,
+                      "cost":  240.0
+                  },
+                  {
+                      "name":  "MINERAL WATER",
+                      "quantity":  2,
+                      "cost":  40.0
+                  }
+              ],
+    "totals":  {
+                   "subtotal":  610.0,
+                   "tax_total":  109.42,
+                   "service_charge":  null,
+                   "discount":  null,
+                   "grand_total":  719.0
+               },
+    "tax_breakdown":  [
+                          {
+                              "name":  "SERVICE TAX @4.94%",
+                              "amount":  30.16
+                          },
+                          {
+                              "name":  "VAT @12.50%",
+                              "amount":  71.26
+                          },
+                          {
+                              "name":  "VAT @20.00%",
+                              "amount":  8.0
+                          }
+                      ],
+    "meta":  {
+                 "image":  "r031.jpeg",
+                 "status":  "done",
+                 "checklist":  {
+                                   "items_done":  true,
+                                   "grand_total_done":  true,
+                                   "double_checked":  true
+                               }
+             }
+}
