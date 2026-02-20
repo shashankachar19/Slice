@@ -616,8 +616,8 @@ export default function Page() {
   const joinUrl = useMemo(() => {
     if (!lobbyId) return "";
     if (typeof window === "undefined") return "";
-    return `${window.location.origin}/join?lobby_id=${encodeURIComponent(lobbyId)}&passcode=${encodeURIComponent(passcode)}`;
-  }, [lobbyId, passcode]);
+    return `${window.location.origin}/join?lobby_id=${encodeURIComponent(lobbyId)}`;
+  }, [lobbyId]);
 
   const joinQrUrl = useMemo(() => {
     if (!joinUrl) return "";
@@ -714,12 +714,15 @@ export default function Page() {
     const id = forLobbyId || lobbyId;
     if (!id) return;
     const ts = Date.now();
+    const authHeaders = { "X-Lobby-Passcode": passcode };
     const [itemsRes, summaryRes] = await Promise.all([
-      fetch(`${API_BASE}/lobby/${id}/items?lobby_passcode=${encodeURIComponent(passcode)}&t=${ts}`, {
+      fetch(`${API_BASE}/lobby/${id}/items?t=${ts}`, {
         cache: "no-store",
+        headers: authHeaders,
       }),
-      fetch(`${API_BASE}/lobby/${id}/summary?lobby_passcode=${encodeURIComponent(passcode)}&t=${ts}`, {
+      fetch(`${API_BASE}/lobby/${id}/summary?t=${ts}`, {
         cache: "no-store",
+        headers: authHeaders,
       }),
     ]);
 

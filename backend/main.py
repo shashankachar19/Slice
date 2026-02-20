@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Query, HTTPException
+from fastapi import FastAPI, File, UploadFile, Query, HTTPException, Header
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from paddleocr import PaddleOCR
@@ -8,6 +8,9 @@ import re
 import os
 import json
 import base64
+import hashlib
+import hmac
+import secrets
 import urllib.request
 import urllib.error
 import uuid
@@ -18,18 +21,6 @@ from typing import Any, Dict, List, Optional, Tuple
 from pydantic import BaseModel, Field
 
 app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-print("Loading PaddleOCR...")
-ocr = PaddleOCR(use_angle_cls=True, lang="en", show_log=False)
-print("PaddleOCR Ready! - Waiting for Bill...")
 
 
 def load_dotenv_file() -> None:
@@ -58,6 +49,27 @@ def load_dotenv_file() -> None:
 
 
 load_dotenv_file()
+
+
+def parse_allowed_origins(raw: str) -> List[str]:
+    parts = [p.strip() for p in raw.split(",")]
+    return [p for p in parts if p]
+
+
+DEFAULT_CORS_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
+CORS_ALLOW_ORIGINS = parse_allowed_origins(os.getenv("CORS_ALLOW_ORIGINS", DEFAULT_CORS_ORIGINS))
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ALLOW_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "X-Lobby-Passcode"],
+)
+
+print("Loading PaddleOCR...")
+ocr = PaddleOCR(use_angle_cls=True, lang="en", show_log=False)
+print("PaddleOCR Ready! - Waiting for Bill...")
 
 CURRENCY_PATTERN = re.compile(
     r"(?:\u20B9|Rs\.?|INR|\$)?\s*(\d{1,3}(?:,\d{3})*|\d+)(?:\.(\d{2}))?(?!\d)"
@@ -151,6 +163,8 @@ GEMINI_TIMEOUT_SEC = float(os.getenv("GEMINI_TIMEOUT_SEC", "12"))
 APP_VERSION = "0.4.0"
 DB_PATH = os.path.join(os.path.dirname(__file__), "app.db")
 FRONTEND_PAGE = os.path.join(os.path.dirname(__file__), "frontend", "index.html")
+PASSCODE_HASH_PREFIX = "pbkdf2_sha256$"
+PASSCODE_HASH_ITERATIONS = int(os.getenv("PASSCODE_HASH_ITERATIONS", "390000"))
 
 NON_VEG_KEYWORDS = {
     "chicken",
@@ -1154,6 +1168,45 @@ def sanitize_receipt_totals(raw_totals: Optional[Dict[str, Any]]) -> Dict[str, A
     return out
 
 
+def _urlsafe_b64decode_nopad(raw: str) -> bytes:
+    pad_len = (-len(raw)) % 4
+    return base64.urlsafe_b64decode(raw + ("=" * pad_len))
+
+
+def hash_passcode(passcode: str) -> str:
+    normalized = (passcode or "").strip()
+    if not normalized:
+        raise ValueError("Passcode cannot be empty")
+    salt = secrets.token_bytes(16)
+    digest = hashlib.pbkdf2_hmac(
+        "sha256",
+        normalized.encode("utf-8"),
+        salt,
+        PASSCODE_HASH_ITERATIONS,
+    )
+    salt_b64 = base64.urlsafe_b64encode(salt).decode("ascii").rstrip("=")
+    digest_b64 = base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
+    return f"{PASSCODE_HASH_PREFIX}{PASSCODE_HASH_ITERATIONS}${salt_b64}${digest_b64}"
+
+
+def verify_passcode(passcode: str, stored_value: str) -> bool:
+    normalized = (passcode or "").strip()
+    stored = (stored_value or "").strip()
+    if not normalized or not stored:
+        return False
+    if not stored.startswith(PASSCODE_HASH_PREFIX):
+        return hmac.compare_digest(stored, normalized)
+    try:
+        _, iteration_raw, salt_b64, digest_b64 = stored.split("$", 3)
+        iterations = int(iteration_raw)
+        salt = _urlsafe_b64decode_nopad(salt_b64)
+        expected = _urlsafe_b64decode_nopad(digest_b64)
+    except Exception:
+        return False
+    computed = hashlib.pbkdf2_hmac("sha256", normalized.encode("utf-8"), salt, iterations)
+    return hmac.compare_digest(expected, computed)
+
+
 def fetch_lobby(lobby_id: str) -> Optional[sqlite3.Row]:
     with get_db_conn() as conn:
         return conn.execute("SELECT * FROM lobbies WHERE id = ?", (lobby_id,)).fetchone()
@@ -1174,8 +1227,14 @@ def validate_lobby_passcode(lobby_id: str, lobby_passcode: str) -> None:
     lobby = fetch_lobby(lobby_id)
     if not lobby:
         raise HTTPException(status_code=404, detail="Lobby not found")
-    if lobby["passcode"] != (lobby_passcode or "").strip():
+    stored = str(lobby["passcode"] or "")
+    if not verify_passcode(lobby_passcode, stored):
         raise HTTPException(status_code=401, detail="Invalid lobby passcode")
+    # Migrate legacy plaintext passcodes to hashed representation on successful auth.
+    if stored and not stored.startswith(PASSCODE_HASH_PREFIX):
+        with get_db_conn() as conn:
+            conn.execute("UPDATE lobbies SET passcode = ? WHERE id = ?", (hash_passcode(lobby_passcode), lobby_id))
+            conn.commit()
 
 
 def validate_host_actor(lobby_id: str, actor_user_id: Optional[str]) -> None:
@@ -1375,7 +1434,7 @@ async def version():
 async def create_lobby(req: CreateLobbyRequest):
     lobby_id = str(uuid.uuid4())[:8]
     lobby_name = req.lobby_name or f"Lobby-{lobby_id}"
-    passcode = req.lobby_passcode.strip()
+    passcode = hash_passcode(req.lobby_passcode)
     items = normalize_lobby_items(req.items)
     created_at = datetime.now(timezone.utc).isoformat()
     receipt_image = req.receipt_image if req.receipt_image else None
@@ -1757,8 +1816,12 @@ async def add_lobby_item(lobby_id: str, req: AddLobbyItemRequest):
 
 
 @app.get("/lobby/{lobby_id}/summary")
-async def lobby_summary(lobby_id: str, lobby_passcode: str = Query(...), format: str = Query("full")):
-    validate_lobby_passcode(lobby_id, lobby_passcode)
+async def lobby_summary(
+    lobby_id: str,
+    format: str = Query("full"),
+    x_lobby_passcode: str = Header(..., alias="X-Lobby-Passcode"),
+):
+    validate_lobby_passcode(lobby_id, x_lobby_passcode)
     summary = compute_lobby_summary(lobby_id)
     if format == "compact":
         return {
@@ -1787,8 +1850,8 @@ async def lobby_summary(lobby_id: str, lobby_passcode: str = Query(...), format:
 
 
 @app.get("/lobby/{lobby_id}")
-async def lobby_state(lobby_id: str, lobby_passcode: str = Query(...)):
-    validate_lobby_passcode(lobby_id, lobby_passcode)
+async def lobby_state(lobby_id: str, x_lobby_passcode: str = Header(..., alias="X-Lobby-Passcode")):
+    validate_lobby_passcode(lobby_id, x_lobby_passcode)
     lobby = fetch_lobby(lobby_id)
     if not lobby:
         raise HTTPException(status_code=404, detail="Lobby not found")
@@ -1806,8 +1869,8 @@ async def lobby_state(lobby_id: str, lobby_passcode: str = Query(...)):
 
 
 @app.get("/lobby/{lobby_id}/items")
-async def lobby_items(lobby_id: str, lobby_passcode: str = Query(...)):
-    validate_lobby_passcode(lobby_id, lobby_passcode)
+async def lobby_items(lobby_id: str, x_lobby_passcode: str = Header(..., alias="X-Lobby-Passcode")):
+    validate_lobby_passcode(lobby_id, x_lobby_passcode)
     return {"lobby_id": lobby_id, "items": fetch_lobby_items(lobby_id)}
 
 

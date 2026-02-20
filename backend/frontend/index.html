@@ -140,7 +140,7 @@
     function buildJoinLink() {
       if (!lobbyId) return "";
       const base = normalizeHost($("hostBase").value);
-      return `${base}/join?join=1&lobby_id=${encodeURIComponent(lobbyId)}&passcode=${encodeURIComponent(currentPasscode())}`;
+      return `${base}/join?join=1&lobby_id=${encodeURIComponent(lobbyId)}`;
     }
 
     function renderQr(link) {
@@ -233,7 +233,7 @@
       lobbyId = $("lobbyId").value.trim() || lobbyId;
       if (!lobbyId || !currentPasscode()) return;
       try {
-        const data = await api(`/lobby/${lobbyId}/items?lobby_passcode=${encodeURIComponent(currentPasscode())}`);
+        const data = await api(`/lobby/${lobbyId}/items`);
         if (Array.isArray(data.items) && data.items.length) {
           scanItems = data.items;
           renderClaimItems();
@@ -242,9 +242,13 @@
     }
 
     async function api(path, method="GET", body=null) {
+      const headers = {};
+      if (body) headers["Content-Type"] = "application/json";
+      const passcode = currentPasscode();
+      if (passcode) headers["X-Lobby-Passcode"] = passcode;
       const res = await fetch(path, {
         method,
-        headers: body ? {"Content-Type": "application/json"} : undefined,
+        headers: Object.keys(headers).length ? headers : undefined,
         body: body ? JSON.stringify(body) : undefined
       });
       const data = await res.json();
@@ -353,7 +357,7 @@
       lobbyId = $("lobbyId").value.trim() || lobbyId;
       if (!lobbyId) return alert("Enter/Create lobby first");
       try {
-        const data = await api(`/lobby/${lobbyId}/summary?lobby_passcode=${encodeURIComponent(currentPasscode())}`);
+        const data = await api(`/lobby/${lobbyId}/summary`);
         renderSummaryStats(data);
         $("summaryOut").textContent = JSON.stringify(data, null, 2);
       } catch (e) {

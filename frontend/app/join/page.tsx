@@ -181,8 +181,8 @@ function JoinPageContent() {
     if (!lobbyId || !passcode) return;
     const ts = Date.now();
     const res = await fetch(
-      `${API_BASE}/lobby/${lobbyId}/items?lobby_passcode=${encodeURIComponent(passcode)}&t=${ts}`,
-      { cache: "no-store" }
+      `${API_BASE}/lobby/${lobbyId}/items?t=${ts}`,
+      { cache: "no-store", headers: { "X-Lobby-Passcode": passcode } }
     );
     if (!res.ok) return;
     const data = await res.json();
@@ -193,8 +193,8 @@ function JoinPageContent() {
     if (!lobbyId || !passcode) return;
     const ts = Date.now();
     const res = await fetch(
-      `${API_BASE}/lobby/${lobbyId}?lobby_passcode=${encodeURIComponent(passcode)}&t=${ts}`,
-      { cache: "no-store" }
+      `${API_BASE}/lobby/${lobbyId}?t=${ts}`,
+      { cache: "no-store", headers: { "X-Lobby-Passcode": passcode } }
     );
     if (!res.ok) return;
     const data = (await res.json()) as LobbyStateResponse;
@@ -205,8 +205,8 @@ function JoinPageContent() {
     if (!lobbyId || !passcode) return;
     const ts = Date.now();
     const res = await fetch(
-      `${API_BASE}/lobby/${lobbyId}/summary?lobby_passcode=${encodeURIComponent(passcode)}&t=${ts}`,
-      { cache: "no-store" }
+      `${API_BASE}/lobby/${lobbyId}/summary?t=${ts}`,
+      { cache: "no-store", headers: { "X-Lobby-Passcode": passcode } }
     );
     if (!res.ok) return;
     const data = (await res.json()) as Summary;

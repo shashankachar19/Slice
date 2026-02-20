@@ -47,7 +47,10 @@ def run_demo() -> None:
             json={"user_id": bob_id, "item_id": items[1]["id"], "quantity": 1, "lobby_passcode": "1234"},
         ).raise_for_status()
 
-    summary_resp = client.get(f"/lobby/{lobby_id}/summary?lobby_passcode=1234&format=compact")
+    summary_resp = client.get(
+        f"/lobby/{lobby_id}/summary?format=compact",
+        headers={"X-Lobby-Passcode": "1234"},
+    )
     summary_resp.raise_for_status()
     summary = summary_resp.json()
 

@@ -38,6 +38,35 @@ NEXT_PUBLIC_API_BASE=http://127.0.0.1:8000
 
 If using phone + hotspot/Wi-Fi, replace `127.0.0.1` with your current laptop IPv4 and restart frontend.
 
+Backend env values (local only) can be placed in `backend/.env`:
+
+```env
+GEMINI_API_KEY=your_key_here
+GEMINI_MODEL=gemini-1.5-flash
+GEMINI_TIMEOUT_SEC=12
+CORS_ALLOW_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+PASSCODE_HASH_ITERATIONS=390000
+```
+
+## Production Security Checklist
+
+- Do not commit `.env`, `.env.local`, `*.db`, `venv`, `node_modules`.
+- Rotate any key previously used in local test files.
+- Set production env vars in hosting dashboards only:
+  - Backend: `GEMINI_API_KEY`, `CORS_ALLOW_ORIGINS`, optional `PASSCODE_HASH_ITERATIONS`
+  - Frontend: `NEXT_PUBLIC_API_BASE`
+- Restrict backend CORS with exact frontend origin(s) only.
+- Lobby passcodes are now:
+  - hashed at rest in DB using PBKDF2-SHA256
+  - sent in `X-Lobby-Passcode` header for read endpoints (not URL query params)
+
+## Deploy (Recommended)
+
+1. Deploy backend first (Render/Railway/Fly.io) and set backend env vars in dashboard.
+2. Deploy frontend (Vercel) with `NEXT_PUBLIC_API_BASE=https://<your-backend-domain>`.
+3. Update backend `CORS_ALLOW_ORIGINS` to your frontend domain, for example:
+   - `https://your-app.vercel.app`
+
 ## Evaluation
 
 Run evaluation from backend:
