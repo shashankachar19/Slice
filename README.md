@@ -1,4 +1,4 @@
-﻿# Slice Receipt Splitter
+﻿# Slice Lobby
 
 ## Aim and Goal
 
