@@ -9,6 +9,8 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+import { useSearchParams } from "next/navigation";
+import QRCode from "react-qr-code";
 import Webcam from "react-webcam";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
 
@@ -84,6 +86,7 @@ type LobbyState = {
 };
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
+const SCAN_USE_HYBRID = (process.env.NEXT_PUBLIC_SCAN_USE_HYBRID || "false").toLowerCase() === "true";
 const NON_MENU_ITEM_NAME_RE =
   /\b(total|tota|subtotal|sub total|total amount|grand total|gr\.?\s*total|gross total|net amount|amount due|payable|bill total|bill amount|bil amount|round off|service charge|service tax|discount|gst|cgst|sgst|vat|tax)\b/i;
 const DEFAULT_OTHER_OPTIONS = ["starter", "main_course", "bread", "rice", "dessert", "snack", "side"];
@@ -462,19 +465,23 @@ function LiquidWaveCircle({ percent }: { percent: number }) {
 }
 
 export default function Page() {
+  const search = useSearchParams();
   const webcamRef = useRef<Webcam>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
-  const [step, setStep] = useState<"scanner" | "lobby">("scanner");
+  const [step, setStep] = useState<"landing" | "scanner" | "lobby">("landing");
+  const [appRole, setAppRole] = useState<"host" | "participant">("host");
   const [lobbyName, setLobbyName] = useState("Demo Dinner");
   const [passcode, setPasscode] = useState("1234");
   const [userName, setUserName] = useState("Shashank");
   const [lobbyId, setLobbyId] = useState("");
   const [userId, setUserId] = useState("");
+  const [joinLobbyCode, setJoinLobbyCode] = useState("");
   const [items, setItems] = useState<ScanItem[]>([]);
   const [summary, setSummary] = useState<LobbySummary | null>(null);
   const [status, setStatus] = useState("Ready");
   const [busy, setBusy] = useState(false);
   const [billImage, setBillImage] = useState<string | null>(null);
+  const [billImageSource, setBillImageSource] = useState<"camera" | "upload" | null>(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState<string>("");
   const [cameraFacing, setCameraFacing] = useState<"environment" | "user">("user");
@@ -503,6 +510,12 @@ export default function Page() {
     item: ScanItem;
     quantity: number;
     label: string;
+  } | null>(null);
+  const [resetConfirm, setResetConfirm] = useState<{
+    itemId: string;
+    itemName: string;
+    resetUserId?: string;
+    resetUserName?: string;
   } | null>(null);
   const [reviewDraft, setReviewDraft] = useState<{
     subtotal: string;
@@ -536,8 +549,25 @@ export default function Page() {
   } | null>(null);
   const parallaxX = useMotionValue(0);
   const parallaxY = useMotionValue(0);
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+  const [showCustomCursor, setShowCustomCursor] = useState(false);
+  const [cursorVisible, setCursorVisible] = useState(false);
+  const [cursorInteractive, setCursorInteractive] = useState(false);
+  const [isSettled, setIsSettled] = useState(false);
+  const [claimErrorToast, setClaimErrorToast] = useState<{
+    title: string;
+    subtitle: string;
+    token: number;
+  } | null>(null);
+  const [tableClosedToast, setTableClosedToast] = useState<{
+    message: string;
+    token: number;
+  } | null>(null);
   const pullStartYRef = useRef<number | null>(null);
   const pullActiveRef = useRef(false);
+  const toastTimerRef = useRef<number | null>(null);
+  const tableToastTimerRef = useRef<number | null>(null);
 
   const claimsByItem = useMemo(() => {
     const map: Record<string, { total: number; mine: number; others: Array<{ id: string; name: string }> }> = {};
@@ -553,11 +583,6 @@ export default function Page() {
     return map;
   }, [summary, userId]);
 
-  const myTotal = useMemo(() => {
-    if (!summary || !userId) return 0;
-    return Number(summary.users?.[userId]?.total || 0);
-  }, [summary, userId]);
-  const myExtraShare = useMemo(() => Number(summary?.users?.[userId]?.extra_share || 0), [summary, userId]);
   const canHostManage = Boolean(userId);
 
   const visibleItems = useMemo(() => {
@@ -611,6 +636,68 @@ export default function Page() {
   );
   const uiExtraCharges = useMemo(() => Number(summary?.extra_charges || 0), [summary]);
   const uiGrandTotal = useMemo(() => Number((uiItemSubtotal + uiExtraCharges).toFixed(2)), [uiItemSubtotal, uiExtraCharges]);
+  const lobbyBaseTotal = useMemo(
+    () =>
+      Number(
+        items
+          .reduce((acc, it) => {
+            const qty = Number(it?.quantity || 0);
+            const rate = Number(it?.unit_price || 0);
+            const line = rate > 0 ? qty * rate : Number(it?.cost || 0);
+            return acc + (Number.isFinite(line) ? line : 0);
+          }, 0)
+          .toFixed(2)
+      ),
+    [items]
+  );
+  const participantComputedTotals = useMemo(() => {
+    const out: Record<
+      string,
+      { user_name: string; claimedBase: number; ratio: number; extraShare: number; finalPayable: number }
+    > = {};
+    for (const [uid, user] of Object.entries(summary?.users || {})) {
+      const claimedBaseFromItems = Number(
+        (user.items || []).reduce((acc, row) => acc + Number(row.amount || 0), 0).toFixed(2)
+      );
+      const claimedBaseFallback = Number(user.base_total || 0);
+      const claimedBase = Number(
+        (claimedBaseFromItems > 0 ? claimedBaseFromItems : claimedBaseFallback).toFixed(2)
+      );
+      const ratio = lobbyBaseTotal > 0 ? claimedBase / lobbyBaseTotal : 0;
+      const extraShare = Number((uiExtraCharges * ratio).toFixed(2));
+      const finalPayable = Number((claimedBase + extraShare).toFixed(2));
+      out[uid] = {
+        user_name: user.user_name,
+        claimedBase,
+        ratio,
+        extraShare,
+        finalPayable,
+      };
+    }
+    return out;
+  }, [summary, lobbyBaseTotal, uiExtraCharges]);
+  const myClaimedBase = useMemo(
+    () => Number(participantComputedTotals[userId || ""]?.claimedBase || 0),
+    [participantComputedTotals, userId]
+  );
+  const myProportionalRatio = useMemo(
+    () => Number(participantComputedTotals[userId || ""]?.ratio || 0),
+    [participantComputedTotals, userId]
+  );
+  const myExtraShare = useMemo(
+    () => Number(participantComputedTotals[userId || ""]?.extraShare || 0),
+    [participantComputedTotals, userId]
+  );
+  const myTotal = useMemo(
+    () => Number(participantComputedTotals[userId || ""]?.finalPayable || 0),
+    [participantComputedTotals, userId]
+  );
+  const upiString = useMemo(
+    () =>
+      `upi://pay?pa=demo@upi&pn=SliceHost&am=${Number(myTotal).toFixed(2)}&cu=INR`,
+    [myTotal]
+  );
+  const isHost = useMemo(() => appRole === "host" && Boolean(userId) && step === "lobby", [appRole, userId, step]);
   const hoveredItem = useMemo(() => visibleItems.find((it) => it.id === hoveredItemId) || null, [visibleItems, hoveredItemId]);
 
   const joinUrl = useMemo(() => {
@@ -623,6 +710,20 @@ export default function Page() {
     if (!joinUrl) return "";
     return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(joinUrl)}`;
   }, [joinUrl]);
+  const webcamVideoConstraints = useMemo(() => {
+    if (selectedCameraId) {
+      return {
+        deviceId: { exact: selectedCameraId },
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+      };
+    }
+    return {
+      facingMode: cameraFacing,
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+    };
+  }, [selectedCameraId, cameraFacing]);
 
   async function createLobbyFromScan(previewDataUrl: string, filteredItems: ScanItem[], receiptTotals?: ReceiptTotals) {
     const createRes = await fetch(`${API_BASE}/lobby/create`, {
@@ -648,11 +749,60 @@ export default function Page() {
     if (!joinRes.ok) throw new Error("Join lobby failed");
 
     setLobbyId(createData.lobby_id);
+    setUserName(joinData.user_name || userName);
     setUserId(joinData.user_id);
     setItems((prev) => mergeItemsById(prev, createData.items || []));
     setStep("lobby");
     setStatus(`Lobby ${createData.lobby_id} ready`);
     await fetchLobbyState(createData.lobby_id);
+  }
+
+  async function joinParticipantLobby(targetLobbyId: string, targetPasscode: string, targetName: string) {
+    const joinRes = await fetch(`${API_BASE}/lobby/${targetLobbyId}/join`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_name: targetName, lobby_passcode: targetPasscode }),
+    });
+    const joinData = (await joinRes.json()) as JoinResponse;
+    if (!joinRes.ok) {
+      throw new Error("Join lobby failed");
+    }
+    setLobbyId(targetLobbyId);
+    setPasscode(targetPasscode);
+    setUserName(joinData.user_name || targetName);
+    setUserId(joinData.user_id);
+    setStep("lobby");
+    setStatus(`Joined lobby ${targetLobbyId}`);
+    await fetchLobbyState(targetLobbyId);
+  }
+
+  function openHostScanner() {
+    setAppRole("host");
+    setStep("scanner");
+    setStatus("Host mode: upload a receipt to create lobby");
+  }
+
+  async function manualJoinByCode() {
+    const code = joinLobbyCode.trim();
+    if (!code) {
+      setStatus("Enter lobby code");
+      return;
+    }
+    if (!passcode.trim() || !userName.trim()) {
+      setStatus("Enter your name and passcode to join");
+      return;
+    }
+    setBusy(true);
+    try {
+      setAppRole("participant");
+      setStep("lobby");
+      await joinParticipantLobby(code, passcode.trim(), userName.trim());
+    } catch (err) {
+      setStatus(err instanceof Error ? err.message : "Join lobby failed");
+      setStep("landing");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function loadCameraDevices() {
@@ -669,18 +819,49 @@ export default function Page() {
         (c) => !/virtual|obs|droidcam|epoccam|ivcam/i.test(c.label)
       );
       setCameraDevices(cams);
+      if (cams.length === 0) {
+        setCameraReady(false);
+        setCameraError("Camera unavailable - Use Upload Receipt");
+        return;
+      }
       if (!selectedCameraId && cams.length > 0) {
         setSelectedCameraId((preferred || cams[0]).id);
       }
     } catch {
-      // ignore device listing errors
+      setCameraReady(false);
+      setCameraError("Camera unavailable - Use Upload Receipt");
     }
   }
 
   useEffect(() => {
-    loadCameraDevices();
+    if (appRole !== "host" || step !== "scanner") return;
+    let cancelled = false;
+    const ensureCamera = async () => {
+      setCameraError("");
+      setCameraReady(false);
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          throw new Error("Camera API not supported");
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: cameraFacing },
+          audio: false,
+        });
+        stream.getTracks().forEach((t) => t.stop());
+        if (cancelled) return;
+        await loadCameraDevices();
+      } catch {
+        if (cancelled) return;
+        setCameraError("Camera unavailable - Use Upload Receipt");
+        setStatus("Camera unavailable - use Upload Receipt");
+      }
+    };
+    ensureCamera();
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [appRole, step, cameraFacing]);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -710,6 +891,153 @@ export default function Page() {
     };
   }, [parallaxX, parallaxY]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+    setShowCustomCursor(finePointer);
+    if (!finePointer) return;
+
+    const onMove = (e: MouseEvent) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+      const target = e.target as HTMLElement | null;
+      const interactive = Boolean(target?.closest("button, a, [role='button'], [data-cursor='interactive']"));
+      setCursorInteractive(interactive);
+      setCursorVisible(true);
+    };
+    const onMouseLeaveWindow = (e: MouseEvent) => {
+      if (!e.relatedTarget) setCursorVisible(false);
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseout", onMouseLeaveWindow);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseout", onMouseLeaveWindow);
+    };
+  }, [cursorX, cursorY]);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (!showCustomCursor) return;
+    const prevBodyCursor = document.body.style.cursor;
+    const prevHtmlCursor = document.documentElement.style.cursor;
+    document.body.style.cursor = "none";
+    document.documentElement.style.cursor = "none";
+    return () => {
+      document.body.style.cursor = prevBodyCursor;
+      document.documentElement.style.cursor = prevHtmlCursor;
+    };
+  }, [showCustomCursor]);
+
+  useEffect(() => {
+    if (!isTotalModalOpen) setIsSettled(false);
+  }, [isTotalModalOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+      if (tableToastTimerRef.current) {
+        window.clearTimeout(tableToastTimerRef.current);
+      }
+    };
+  }, []);
+
+  function showClaimConflictToast(
+    title = "Too slow!",
+    subtitle = "Someone else grabbed this item."
+  ) {
+    setClaimErrorToast({ title, subtitle, token: Date.now() });
+    if (toastTimerRef.current) {
+      window.clearTimeout(toastTimerRef.current);
+    }
+    toastTimerRef.current = window.setTimeout(() => {
+      setClaimErrorToast(null);
+      toastTimerRef.current = null;
+    }, 3000);
+  }
+
+  async function fetchLatestLobbySnapshot() {
+    if (!lobbyId) return false;
+    const ts = Date.now();
+    const res = await fetch(`${API_BASE}/lobby/${lobbyId}?t=${ts}`, {
+      cache: "no-store",
+      headers: { "X-Lobby-Passcode": passcode },
+    });
+    if (res.status === 404) {
+      ejectToLanding("The host has closed this table.");
+      return false;
+    }
+    if (!res.ok) return false;
+    const data = await res.json();
+    const incomingItems = Array.isArray(data?.items) ? (data.items as ScanItem[]) : [];
+    setItems((prev) => mergeItemsById(prev, incomingItems));
+    setSummary((data?.summary as LobbySummary) || null);
+    setBillImage((data?.receipt_image as string) || null);
+    return true;
+  }
+
+  function ejectToLanding(message: string) {
+    setItems([]);
+    setSummary(null);
+    setBillImage(null);
+    setBillImageSource(null);
+    setLobbyId("");
+    setUserId("");
+    setShowAddItem(false);
+    setScanReview(null);
+    setIsTotalModalOpen(false);
+    setAppRole("host");
+    setStep("landing");
+    setStatus(message);
+    setTableClosedToast({ message, token: Date.now() });
+    if (tableToastTimerRef.current) {
+      window.clearTimeout(tableToastTimerRef.current);
+    }
+    tableToastTimerRef.current = window.setTimeout(() => {
+      setTableClosedToast(null);
+      tableToastTimerRef.current = null;
+    }, 3000);
+  }
+
+  async function closeTable() {
+    if (!lobbyId || !userId || !isHost) return;
+    try {
+      const res = await fetch(`${API_BASE}/lobby/${lobbyId}?actor_user_id=${encodeURIComponent(userId)}`, {
+        method: "DELETE",
+        headers: { "X-Lobby-Passcode": passcode },
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setStatus(err?.detail || err?.error || "Unable to close table");
+        return;
+      }
+      ejectToLanding("Table closed successfully.");
+    } catch {
+      setStatus("Unable to close table");
+    }
+  }
+
+  async function settleMyShare() {
+    setIsSettled(true);
+    try {
+      const confettiMod = await import("canvas-confetti");
+      const confetti = confettiMod.default;
+      confetti({
+        particleCount: 120,
+        spread: 72,
+        startVelocity: 36,
+        scalar: 1.0,
+        origin: { y: 0.65 },
+        colors: ["#f59e0b", "#fbbf24"],
+      });
+    } catch {
+      // Confetti is optional for this interaction.
+    }
+  }
+
   async function fetchLobbyState(forLobbyId?: string) {
     const id = forLobbyId || lobbyId;
     if (!id) return;
@@ -726,6 +1054,10 @@ export default function Page() {
       }),
     ]);
 
+    if (itemsRes.status === 404 || summaryRes.status === 404) {
+      ejectToLanding("The host has closed this table.");
+      return;
+    }
     if (!itemsRes.ok || !summaryRes.ok) {
       let detail = "Failed to sync lobby";
       try {
@@ -768,8 +1100,44 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, lobbyId, passcode]);
 
-  async function runScanFlow(previewDataUrl: string) {
+  useEffect(() => {
+    const inviteLobbyId = (search.get("lobby_id") || "").trim();
+    if (!inviteLobbyId) return;
+    const invitePasscode = (search.get("passcode") || "").trim();
+    const inviteName = (search.get("user_name") || search.get("name") || userName || "Guest").trim();
+
+    setAppRole("participant");
+    setStep("lobby");
+
+    if (!invitePasscode) {
+      if (typeof window !== "undefined" && window.location.pathname !== "/join") {
+        const nextUrl = `/join?lobby_id=${encodeURIComponent(inviteLobbyId)}`;
+        window.location.assign(nextUrl);
+      }
+      return;
+    }
+
+    if (lobbyId === inviteLobbyId && userId) return;
+
+    joinParticipantLobby(inviteLobbyId, invitePasscode, inviteName).catch((err) => {
+      setStatus(err instanceof Error ? err.message : "Join lobby failed");
+      if (typeof window !== "undefined" && window.location.pathname !== "/join") {
+        const nextUrl = `/join?lobby_id=${encodeURIComponent(inviteLobbyId)}`;
+        window.location.assign(nextUrl);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, lobbyId, userId]);
+
+  useEffect(() => {
+    if (step === "scanner" && items.length > 0) {
+      setStep("lobby");
+    }
+  }, [step, items.length]);
+
+  async function runScanFlow(previewDataUrl: string, source: "camera" | "upload") {
     setBillImage(previewDataUrl);
+    setBillImageSource(source);
     setBusy(true);
     setStatus("Resizing image...");
     try {
@@ -777,7 +1145,10 @@ export default function Page() {
       const fd = new FormData();
       fd.append("file", resizedBlob, "scan.jpg");
       setStatus("Scanning...");
-      const scanRes = await fetch(`${API_BASE}/scan-bill?use_hybrid=true`, { method: "POST", body: fd });
+      const scanRes = await fetch(`${API_BASE}/scan-bill?use_hybrid=${SCAN_USE_HYBRID ? "true" : "false"}`, {
+        method: "POST",
+        body: fd,
+      });
       const scanData = (await scanRes.json()) as ScanResponse;
       const filteredItems = (scanData.items || []).filter(
         (it) => !NON_MENU_ITEM_NAME_RE.test(String(it.name || ""))
@@ -811,7 +1182,7 @@ export default function Page() {
     if (!file) return;
     try {
       const dataUrl = await fileToDataUrl(file);
-      await runScanFlow(dataUrl);
+      await runScanFlow(dataUrl, "upload");
     } finally {
       if (uploadRef.current) uploadRef.current.value = "";
     }
@@ -820,11 +1191,13 @@ export default function Page() {
   async function scanAndCreateLobby() {
     const shot = webcamRef.current?.getScreenshot();
     if (!shot) return setStatus("Camera capture failed");
-    await runScanFlow(shot);
+    await runScanFlow(shot, "camera");
   }
 
   function backToScanner() {
     setStep("scanner");
+    setBillImage(null);
+    setBillImageSource(null);
     setItems([]);
     setSummary(null);
     setScanReview(null);
@@ -953,25 +1326,49 @@ export default function Page() {
     const { item, quantity } = claimConfirm;
     setClaimConfirm(null);
     if ("vibrate" in navigator) navigator.vibrate(10);
-    const res = await fetch(`${API_BASE}/claim-item`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        lobby_id: lobbyId,
-        user_id: userId,
-        item_id: item.id,
-        quantity,
-        lobby_passcode: passcode,
-      }),
-    });
-    if (!res.ok) {
+    try {
+      const res = await fetch(`${API_BASE}/claim-item`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lobby_id: lobbyId,
+          user_id: userId,
+          item_id: item.id,
+          quantity,
+          lobby_passcode: passcode,
+        }),
+      });
+      if (!res.ok) {
+        if (res.status === 400 || res.status === 409) {
+          let title = "Too slow!";
+          let subtitle = "Someone else grabbed this item.";
+          try {
+            const payload = await res.json();
+            const msg = String(payload?.error || payload?.detail || "").trim();
+            if (msg) {
+              subtitle = msg;
+            }
+          } catch {
+            // keep fallback copy
+          }
+          showClaimConflictToast(title, subtitle);
+          const synced = await fetchLatestLobbySnapshot();
+          if (!synced) {
+            await fetchLobbyState();
+          }
+          setStatus("Claim state updated from latest lobby data");
+          return;
+        }
+        setStatus("Claim failed");
+        return;
+      }
+      setSuccessItemId(item.id);
+      setTimeout(() => setSuccessItemId(null), 900);
+      setStatus(`Claim updated for ${item.name}`);
+      await fetchLobbyState();
+    } catch {
       setStatus("Claim failed");
-      return;
     }
-    setSuccessItemId(item.id);
-    setTimeout(() => setSuccessItemId(null), 900);
-    setStatus(`Claim updated for ${item.name}`);
-    await fetchLobbyState();
   }
 
   async function copyJoinLink() {
@@ -1034,9 +1431,20 @@ export default function Page() {
     await fetchLobbyState();
   }
 
-  async function resetClaim(itemId: string, resetUserId?: string) {
+  function requestResetClaim(item: ScanItem, resetUserId?: string, resetUserName?: string) {
     if (!lobbyId || !canHostManage) return;
-    if (!window.confirm(resetUserId ? "Reset this user claim?" : "Reset all claims for this item?")) return;
+    setResetConfirm({
+      itemId: item.id,
+      itemName: item.name,
+      resetUserId,
+      resetUserName,
+    });
+  }
+
+  async function confirmResetAction() {
+    if (!lobbyId || !canHostManage || !resetConfirm) return;
+    const { itemId, resetUserId } = resetConfirm;
+    setResetConfirm(null);
     await fetch(`${API_BASE}/lobby/${lobbyId}/claim-reset`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1084,18 +1492,28 @@ export default function Page() {
   function renderItemCard(item: ScanItem) {
     const claim = claimsByItem[item.id] || { total: 0, mine: 0, others: [] };
     const blockedByOthers = claim.total >= item.quantity && claim.mine <= 0;
+    const fullyClaimed = Number(claim.total) >= Number(item.quantity) - 0.0001;
     const mineClaimed = claim.mine > 0;
     const mineRatio = Math.max(0, Math.min(1, Number(item.quantity) > 0 ? claim.mine / Number(item.quantity) : 0));
+    const claimedWakeClass = fullyClaimed
+      ? "opacity-60 transition-all duration-300 ease-in-out hover:opacity-100 focus-within:opacity-100"
+      : "";
     return (
-      <MagneticCard className="break-inside-avoid">
+      <MagneticCard className="break-inside-avoid w-full">
         <motion.div
           id={`item-card-${item.id}`}
+          data-cursor="interactive"
           initial={false}
-          animate={successItemId === item.id ? { scale: [1, 1.03, 1] } : { scale: 1 }}
-          style={{ opacity: 1 }}
+          animate={
+            successItemId === item.id
+              ? { scale: [1, 1.03, 1] }
+              : { scale: 1 }
+          }
           className={`plate-card aurora-border relative overflow-hidden p-3 ${
-            blockedByOthers ? "opacity-55" : ""
-          } ${(successItemId === item.id || lastAddedItemId === item.id) ? "ring-1 ring-amber-300/60" : ""}`}
+            fullyClaimed ? "border-white/5 saturate-75" : ""
+          } ${claimedWakeClass} ${blockedByOthers && !fullyClaimed ? "opacity-55" : ""} ${
+            (successItemId === item.id || lastAddedItemId === item.id) ? "ring-1 ring-amber-300/60" : ""
+          }`}
           onMouseEnter={() => setHoveredItemId(item.id)}
           onMouseLeave={() => setHoveredItemId((prev) => (prev === item.id ? "" : prev))}
         >
@@ -1130,16 +1548,19 @@ export default function Page() {
           </div>
 
           <div className="relative mt-2 flex flex-wrap gap-2">
-            <MagneticButton onClick={() => claimItem(item)} className="btn-primary w-full py-2 text-sm md:w-auto">
+            <MagneticButton onClick={() => claimItem(item)} className="btn-primary w-full min-h-[44px] px-6 py-2 text-sm active:scale-95 md:w-auto">
               {claim.mine > 0 ? "Update / Unclaim" : "Claim"}
             </MagneticButton>
             {canHostManage && (
               <>
-                <MagneticButton onClick={() => startEdit(item)} className="btn-secondary w-full py-2 text-sm md:w-auto">
+                <MagneticButton onClick={() => startEdit(item)} className="btn-secondary w-full min-h-[44px] px-6 py-2 text-sm active:scale-95 md:w-auto">
                   Edit
                 </MagneticButton>
                 {claim.total > 0 && (
-                  <MagneticButton onClick={() => resetClaim(item.id)} className="rounded-2xl bg-rose-500/80 px-4 py-2 text-sm font-semibold text-white">
+                  <MagneticButton
+                    onClick={() => requestResetClaim(item)}
+                    className="min-h-[44px] rounded-2xl border border-rose-500/50 bg-transparent px-6 py-2 text-sm font-semibold text-rose-400 transition hover:bg-rose-500/10 active:scale-95"
+                  >
                     Reset Claims
                   </MagneticButton>
                 )}
@@ -1152,8 +1573,8 @@ export default function Page() {
               {claim.others.map((entry) => (
                 <MagneticButton
                   key={entry.id}
-                  onClick={() => resetClaim(item.id, entry.id)}
-                  className="rounded-full border border-rose-400/40 bg-rose-500/10 px-2 py-1 text-[10px] font-semibold text-rose-300"
+                  onClick={() => requestResetClaim(item, entry.id, entry.name)}
+                  className="rounded-full border border-rose-500/50 bg-transparent px-3 py-2 text-[10px] font-semibold text-rose-400 transition hover:bg-rose-500/10 active:scale-95"
                 >
                   Reset {entry.name}
                 </MagneticButton>
@@ -1253,7 +1674,7 @@ export default function Page() {
 
   return (
     <main
-      className="relative mx-auto max-w-7xl p-4 md:p-6"
+      className="relative mx-auto flex max-w-7xl flex-col p-4 lg:flex-row lg:flex-wrap lg:p-8"
       onTouchStart={onMainTouchStart}
       onTouchMove={onMainTouchMove}
       onTouchEnd={onMainTouchEnd}
@@ -1262,6 +1683,26 @@ export default function Page() {
       <FloatingBlobs parallaxX={parallaxX} parallaxY={parallaxY} />
       <div className="noise-overlay" aria-hidden />
       <div className="vignette-overlay" aria-hidden />
+      {showCustomCursor && (
+        <motion.div
+          aria-hidden
+          className="pointer-events-none fixed left-0 top-0 z-[9999] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{ x: cursorX, y: cursorY }}
+          animate={{
+            opacity: cursorVisible ? 1 : 0,
+            width: cursorInteractive ? 32 : 8,
+            height: cursorInteractive ? 32 : 8,
+            backgroundColor: cursorInteractive ? "rgba(255,255,255,0.10)" : "rgb(255,255,255)",
+            borderColor: cursorInteractive ? "rgba(255,255,255,0.40)" : "rgba(255,255,255,0)",
+            borderWidth: cursorInteractive ? 1 : 0,
+            boxShadow: cursorInteractive
+              ? "0 0 14px rgba(255,255,255,0.35)"
+              : "0 0 10px rgba(255,255,255,0.8)",
+            backdropFilter: cursorInteractive ? "blur(12px)" : "blur(0px)",
+          }}
+          transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.2 }}
+        />
+      )}
       {step === "lobby" && (
         <motion.div
           className="pointer-events-none fixed left-1/2 top-5 z-30 h-14 w-14 -translate-x-1/2 rounded-full border-2 border-amber-300/70"
@@ -1274,14 +1715,37 @@ export default function Page() {
           transition={{ duration: pullRefreshing ? 0.8 : 0.2, repeat: pullRefreshing ? Infinity : 0 }}
         />
       )}
-      <header className="header-glass mb-4 border-b border-white/10 p-4">
+      <header className="header-glass mb-4 w-full border-b border-white/10 p-4">
         <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="title-glow text-xl font-black tracking-tight text-white md:text-3xl">Slice Lobby</h1>
-          <p className="text-sm font-light text-slate-300">High-Gloss Fintech Bill Split</p>
+        <div className="flex items-center gap-3">
+          <motion.div
+            whileHover={{ rotate: 10, scale: 1.1 }}
+            transition={{ type: "spring", stiffness: 320, damping: 18 }}
+            className="rounded-2xl border border-amber-300/35 bg-amber-500/10 p-2 shadow-[0_0_18px_rgba(245,158,11,0.2)]"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-8 w-8 text-[#f59e0b] drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+              aria-hidden
+            >
+              <rect x="3" y="6" width="18" height="12" rx="2.5" />
+              <path d="M3 10h18" />
+              <circle cx="16.5" cy="14" r="1.3" />
+              <path d="M7.5 14h3.5" />
+            </svg>
+          </motion.div>
+          <div>
+            <h1 className="title-glow text-xl font-black tracking-tight text-white md:text-3xl">Slice Lobby</h1>
+            <p className="text-sm font-light text-slate-300">High-Gloss Fintech Bill Split</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          {step === "lobby" && (
+          {step === "lobby" && appRole === "host" && (
             <MagneticButton className="btn-ghost rounded-full px-3 py-1 text-xs" onClick={backToScanner}>
               New Scan
             </MagneticButton>
@@ -1290,94 +1754,244 @@ export default function Page() {
         </div>
         </div>
       </header>
+      <AnimatePresence>
+        {tableClosedToast && (
+          <motion.div
+            key={tableClosedToast.token}
+            className="fixed left-1/2 top-20 z-[96] w-[min(92vw,420px)] -translate-x-1/2"
+            initial={{ opacity: 0, y: -16, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 280, damping: 22 }}
+          >
+            <div className="rounded-2xl border border-white/15 bg-[#0c0a09]/95 p-3 shadow-soft backdrop-blur-xl">
+              <p className="text-sm text-white">{tableClosedToast.message}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {claimErrorToast && (
+          <motion.div
+            key={claimErrorToast.token}
+            className="fixed left-1/2 top-4 z-[95] w-[min(92vw,420px)] -translate-x-1/2"
+            initial={{ opacity: 0, y: -22, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+          >
+            <div className="rounded-2xl border border-rose-500/50 bg-[#0c0a09]/95 p-3 shadow-[0_0_15px_rgba(244,63,94,0.2)] backdrop-blur-xl">
+              <p className="text-sm font-semibold text-white">{claimErrorToast.title}</p>
+              <p className="mt-0.5 text-xs text-slate-400">{claimErrorToast.subtitle}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {step === "lobby" && billImage && (
+        <div className="mb-3 lg:hidden">
+          <MagneticButton
+            type="button"
+            onClick={openBillViewer}
+            className="btn-ghost w-full min-h-[44px] px-6 active:scale-95"
+          >
+            View Bill 📄
+          </MagneticButton>
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
-      {step === "scanner" ? (
+      {step === "landing" ? (
+        <motion.section
+          key="landing"
+          className="mx-auto w-full max-w-2xl"
+          initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: -12, filter: "blur(8px)" }}
+          transition={{ duration: 0.28, ease: "easeOut" }}
+        >
+          <div className="rounded-3xl border border-[#f59e0b]/25 bg-[#0c0a09]/80 p-5 shadow-soft backdrop-blur-2xl">
+            <h2 className="text-2xl font-bold text-amber-100">Welcome to Slice</h2>
+            <p className="mt-1 text-sm text-slate-300">Host a fresh bill or join an existing table by code.</p>
+
+            <button
+              type="button"
+              onClick={openHostScanner}
+              className="mt-5 w-full rounded-xl bg-[#f59e0b] px-5 py-3 font-bold text-black transition hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] active:scale-95"
+            >
+              Host a New Bill
+            </button>
+
+            <div className="mt-6 rounded-2xl border border-[#f59e0b]/20 bg-black/35 p-4">
+              <p className="text-sm font-semibold text-amber-200">Join Existing Table</p>
+              <div className="mt-3 flex gap-2">
+                <input
+                  className="w-full rounded-xl border border-[#f59e0b]/30 bg-black/50 px-3 py-2 text-sm text-white outline-none ring-amber-300/50 transition focus:ring-2"
+                  placeholder="Enter Lobby Code (e.g., d2ce4b8c)"
+                  value={joinLobbyCode}
+                  onChange={(e) => setJoinLobbyCode(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={manualJoinByCode}
+                  disabled={busy}
+                  className="btn-ghost min-h-[44px] shrink-0 rounded-xl px-5 py-2 text-sm"
+                >
+                  Join
+                </button>
+              </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
+                <input
+                  className="field-input"
+                  placeholder="Your name"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                />
+                <input
+                  className="field-input"
+                  placeholder="Passcode"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </motion.section>
+      ) : step === "scanner" && appRole === "host" && items.length === 0 ? (
         <motion.section
           key="scanner"
-          className="grid gap-4 md:grid-cols-2"
+          className="grid w-full gap-4 md:grid-cols-2"
           initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, scale: 1.02, filter: "blur(12px)" }}
           transition={{ duration: 0.35, ease: "easeOut" }}
         >
           <div className="glass relative overflow-hidden p-3">
-            <Webcam
-              key={cameraFacing}
-              ref={webcamRef}
-              className="h-[56vh] w-full rounded-2xl object-cover md:h-[72vh]"
-              screenshotFormat="image/jpeg"
-              audio={false}
-              onUserMedia={() => {
-                setCameraReady(true);
-                setCameraError("");
-                setStatus("Camera ready");
-                loadCameraDevices();
-              }}
-              onUserMediaError={(err) => {
-                setCameraReady(false);
-                const cameraErr =
-                  typeof err === "string"
-                    ? err
-                    : err && typeof err === "object" && "message" in err
-                      ? String(err.message)
-                      : "Camera permission denied or camera unavailable";
-                setCameraError(cameraErr);
-                setStatus("Camera unavailable - use Upload Receipt");
-              }}
-              videoConstraints={{
-                ...(selectedCameraId
-                  ? { deviceId: { exact: selectedCameraId } }
-                  : { facingMode: cameraFacing === "environment" ? { ideal: "environment" } : "user" }),
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-              }}
-            />
-            <div className="pointer-events-none absolute inset-5 rounded-2xl border border-amber-300/60">
-              <div className="laser-line" />
-            </div>
+            {billImage && billImageSource === "upload" ? (
+              <div
+                className="flex h-[56vh] cursor-zoom-in flex-col rounded-2xl border border-amber-300/60 bg-slate-950/85 p-2 md:h-[72vh]"
+                onDoubleClick={openBillViewer}
+                title="Double click to open uploaded bill"
+              >
+                <div className="mb-2 inline-flex rounded-full border border-amber-300/35 bg-amber-500/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-amber-200">
+                  Uploaded Bill Preview
+                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={billImage} alt="Uploaded bill preview" className="min-h-0 flex-1 rounded-xl object-contain" />
+              </div>
+            ) : !cameraError ? (
+              <div className="relative h-[56vh] overflow-hidden rounded-2xl border border-amber-300/60 bg-slate-950/80 md:h-[72vh]">
+                <Webcam
+                  ref={webcamRef}
+                  audio={false}
+                  mirrored={cameraFacing === "user"}
+                  screenshotFormat="image/jpeg"
+                  screenshotQuality={0.95}
+                  videoConstraints={webcamVideoConstraints}
+                  onUserMedia={() => {
+                    setCameraReady(true);
+                    setCameraError("");
+                    setStatus("Camera ready");
+                  }}
+                  onUserMediaError={() => {
+                    setCameraReady(false);
+                    setCameraError("Camera unavailable - Use Upload Receipt");
+                    setStatus("Camera unavailable - use Upload Receipt");
+                  }}
+                  className="h-full w-full object-cover"
+                />
+                <div className="pointer-events-none absolute left-3 top-3 rounded-full border border-emerald-300/35 bg-emerald-500/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-emerald-200">
+                  Live Camera
+                </div>
+              </div>
+            ) : (
+              <div className="flex h-[56vh] items-center justify-center rounded-2xl border border-amber-300/60 bg-slate-950/65 p-4 text-center md:h-[72vh]">
+                <div>
+                  <p className="text-sm font-semibold text-amber-200">Camera unavailable - Use Upload Receipt</p>
+                  <p className="mt-1 text-xs text-slate-300">Browser blocked camera or no webcam was found.</p>
+                </div>
+              </div>
+            )}
           </div>
           <div className="glass flex flex-col gap-3 p-4">
             <h2 className="text-lg font-semibold text-white">Scanner Control</h2>
             <input className="field-input" placeholder="Lobby name" value={lobbyName} onChange={(e) => setLobbyName(e.target.value)} />
             <input className="field-input" placeholder="Your name" value={userName} onChange={(e) => setUserName(e.target.value)} />
             <input className="field-input" placeholder="Passcode" value={passcode} onChange={(e) => setPasscode(e.target.value)} />
-            <input ref={uploadRef} type="file" accept="image/*" className="hidden" onChange={onUploadSelected} />
             <select
               className="field-input"
               value={selectedCameraId}
-              onChange={(e) => {
-                setCameraReady(false);
-                setCameraError("");
-                setSelectedCameraId(e.target.value);
-                setStatus("Switching camera device...");
-              }}
+              onChange={(e) => setSelectedCameraId(e.target.value)}
+              disabled={cameraDevices.length === 0}
             >
-              <option value="">Auto camera</option>
-              {cameraDevices.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.label}
+              <option value="">{cameraDevices.length ? "Auto camera" : "No camera devices found"}</option>
+              {cameraDevices.map((cam) => (
+                <option key={cam.id} value={cam.id}>
+                  {cam.label}
                 </option>
               ))}
             </select>
-            <MagneticButton type="button" onClick={toggleCameraFacing} className="btn-secondary">
-              Switch Camera ({cameraFacing === "user" ? "Front" : "Rear"})
+            <div className="grid grid-cols-2 gap-2">
+              <MagneticButton
+                type="button"
+                onClick={toggleCameraFacing}
+                className="btn-secondary min-h-[44px] px-6 active:scale-95"
+                disabled={busy}
+              >
+                Switch Camera
+              </MagneticButton>
+              <MagneticButton
+                type="button"
+                onClick={loadCameraDevices}
+                className="btn-secondary min-h-[44px] px-6 active:scale-95"
+                disabled={busy}
+              >
+                Reload Devices
+              </MagneticButton>
+            </div>
+            <input ref={uploadRef} type="file" accept="image/*" className="hidden" onChange={onUploadSelected} />
+            <MagneticButton
+              type="button"
+              onClick={scanAndCreateLobby}
+              className="btn-primary min-h-[44px] px-6 active:scale-95"
+              disabled={busy || Boolean(cameraError) || !cameraReady}
+            >
+              {busy ? "Processing..." : "Capture Photo"}
             </MagneticButton>
-            <MagneticButton type="button" onClick={loadCameraDevices} className="btn-secondary">
-              Reload Devices
+            <MagneticButton
+              type="button"
+              onClick={() => uploadRef.current?.click()}
+              className="btn-secondary min-h-[44px] px-6 active:scale-95"
+              disabled={busy}
+            >
+              Upload Receipt
             </MagneticButton>
-            <MagneticButton type="button" onClick={() => uploadRef.current?.click()} className="btn-secondary">Upload Receipt</MagneticButton>
-            <p className="text-xs text-slate-400">Captured/uploaded image is resized to 1280px width before OCR.</p>
+            {!!cameraError && <p className="text-xs text-amber-200">{cameraError}</p>}
+            <p className="text-xs text-slate-400">Uploaded image is resized to 1280px width before OCR.</p>
             {scanReview && (
               <div className="rounded-xl border border-amber-300/30 bg-amber-500/10 p-3 text-xs text-amber-100">
                 <p className="mb-2 font-semibold text-amber-200">Totals Review Required</p>
                 <p>Quality: {scanReview.qualityScore.toFixed(2)} | Flags: {scanReview.needsReviewCount}</p>
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  <input className="field-input" placeholder="Subtotal" value={reviewDraft.subtotal} onChange={(e) => setReviewDraft((d) => ({ ...d, subtotal: e.target.value }))} />
-                  <input className="field-input" placeholder="Tax Total" value={reviewDraft.tax} onChange={(e) => setReviewDraft((d) => ({ ...d, tax: e.target.value }))} />
-                  <input className="field-input" placeholder="Service" value={reviewDraft.serviceCharge} onChange={(e) => setReviewDraft((d) => ({ ...d, serviceCharge: e.target.value }))} />
-                  <input className="field-input" placeholder="Round Off" value={reviewDraft.roundOff} onChange={(e) => setReviewDraft((d) => ({ ...d, roundOff: e.target.value }))} />
-                  <input className="field-input col-span-2" placeholder="Grand Total" value={reviewDraft.grandTotal} onChange={(e) => setReviewDraft((d) => ({ ...d, grandTotal: e.target.value }))} />
+                  <label className="space-y-1">
+                    <span className="block px-1 text-[10px] uppercase tracking-[0.12em] text-amber-200/80">Subtotal</span>
+                    <input className="field-input" placeholder="Subtotal" value={reviewDraft.subtotal} onChange={(e) => setReviewDraft((d) => ({ ...d, subtotal: e.target.value }))} />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="block px-1 text-[10px] uppercase tracking-[0.12em] text-amber-200/80">Tax Total</span>
+                    <input className="field-input" placeholder="Tax Total" value={reviewDraft.tax} onChange={(e) => setReviewDraft((d) => ({ ...d, tax: e.target.value }))} />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="block px-1 text-[10px] uppercase tracking-[0.12em] text-amber-200/80">Service Charge</span>
+                    <input className="field-input" placeholder="Service" value={reviewDraft.serviceCharge} onChange={(e) => setReviewDraft((d) => ({ ...d, serviceCharge: e.target.value }))} />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="block px-1 text-[10px] uppercase tracking-[0.12em] text-amber-200/80">Round Off</span>
+                    <input className="field-input" placeholder="Round Off" value={reviewDraft.roundOff} onChange={(e) => setReviewDraft((d) => ({ ...d, roundOff: e.target.value }))} />
+                  </label>
+                  <label className="col-span-2 space-y-1">
+                    <span className="block px-1 text-[10px] uppercase tracking-[0.12em] text-amber-200/80">Grand Total</span>
+                    <input className="field-input col-span-2" placeholder="Grand Total" value={reviewDraft.grandTotal} onChange={(e) => setReviewDraft((d) => ({ ...d, grandTotal: e.target.value }))} />
+                  </label>
                 </div>
                 <div className="mt-2 flex gap-2">
                   <MagneticButton type="button" className="btn-primary w-full" onClick={confirmTotalsAndCreateLobby} disabled={busy}>
@@ -1388,6 +2002,8 @@ export default function Page() {
                     className="btn-secondary w-full"
                     onClick={() => {
                       setScanReview(null);
+                      setBillImage(null);
+                      setBillImageSource(null);
                       setStatus("Rescan receipt");
                     }}
                     disabled={busy}
@@ -1397,37 +2013,40 @@ export default function Page() {
                 </div>
               </div>
             )}
-            {!cameraReady && (
-              <p className="text-xs text-amber-300">
-                Camera not ready. Allow browser camera permission, or continue with Upload Receipt.
-              </p>
-            )}
-            {cameraError && <p className="text-xs text-rose-300">{cameraError}</p>}
           </div>
           <MagneticButton
-            onClick={scanAndCreateLobby}
+            onClick={() => {
+              if (!cameraError && cameraReady) {
+                void scanAndCreateLobby();
+                return;
+              }
+              uploadRef.current?.click();
+            }}
             disabled={busy}
             className="btn-primary fab-glow fixed bottom-5 right-5 z-30 rounded-full px-6 py-3 md:static md:col-span-2 md:w-full md:rounded-2xl"
           >
-            {busy ? "Processing..." : "Scan Receipt"}
+            {busy ? "Processing..." : !cameraError && cameraReady ? "Capture & Scan Receipt" : "Upload & Scan Receipt"}
           </MagneticButton>
         </motion.section>
       ) : (
         <motion.section
           key="lobby"
-          className="grid gap-4 lg:grid-cols-[0.9fr_1.4fr_0.9fr]"
+          className="flex w-full flex-col gap-4 pb-32 lg:flex-row lg:items-start lg:pb-0"
           initial={{ opacity: 0, scale: 0.97, filter: "blur(12px)" }}
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, scale: 1.02, filter: "blur(12px)" }}
           transition={{ duration: 0.35, ease: "easeOut" }}
         >
-          <aside className="hidden lg:block lg:sticky lg:top-4 lg:self-start">
-            <div className="glass aurora-border p-4">
+          <aside className="hidden lg:block lg:sticky lg:top-4 lg:self-start lg:w-[22%]">
+            <div className="glass aurora-border p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
               <h3 className="mb-2 text-sm font-semibold text-white">Receipt Focus</h3>
               {billImage ? (
                 <>
                   <motion.div
-                    className="h-[72vh] w-full overflow-hidden rounded-xl border border-white/10 bg-slate-950/60 p-2"
+                    layoutId="receipt-lightbox-image"
+                    onDoubleClick={openBillViewer}
+                    title="Double click to open fullscreen"
+                    className="h-[72vh] w-full cursor-zoom-in overflow-hidden rounded-xl border border-white/10 bg-slate-950/60 p-2"
                     animate={{
                       boxShadow: hoveredItem ? "0 0 34px rgba(245,158,11,0.35)" : "0 0 0 rgba(245,158,11,0)",
                       borderColor: hoveredItem ? "rgba(245,158,11,0.75)" : "rgba(255,255,255,0.12)",
@@ -1449,7 +2068,7 @@ export default function Page() {
             </div>
           </aside>
 
-          <div className="space-y-4">
+          <motion.div className="space-y-4 lg:w-[46%]">
             <div className="glass aurora-border p-4">
               <div className="mb-3 flex items-center justify-between">
                 <div>
@@ -1598,47 +2217,47 @@ export default function Page() {
                 </p>
               )}
             </div>
-          </div>
+          </motion.div>
 
-          <aside className="space-y-4 pb-28 lg:sticky lg:top-4 lg:pb-40">
+          <motion.aside className="space-y-4 pb-28 lg:sticky lg:top-4 lg:w-[32%] lg:pb-40">
             <div className="glass aurora-border p-4">
               <h3 className="mb-2 text-sm font-semibold text-slate-200">Your Total</h3>
               <p className="text-2xl font-semibold text-emerald-300"><NumberTicker value={myTotal} /></p>
               <p className="mt-1 text-xs text-slate-400">Extra charges share: <NumberTicker value={myExtraShare} /></p>
             </div>
-            <div className="glass aurora-border p-4">
+            <div className="glass aurora-border p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
               <h3 className="mb-2 text-sm font-semibold text-slate-200">Participant Totals</h3>
               <div className="grid gap-2">
-                {Object.entries(summary?.users || {}).map(([uid, u]) => (
+                {Object.entries(participantComputedTotals).map(([uid, u]) => (
                   <div key={uid} className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2 text-sm">
                     <span className="text-slate-200">{u.user_name}</span>
-                    <span className="font-semibold text-emerald-300"><NumberTicker value={u.total} /></span>
+                    <span className="font-semibold text-emerald-300">Rs {Number(u.finalPayable).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="glass aurora-border p-4">
+            <div className="glass aurora-border p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
               <h3 className="mb-2 text-sm font-semibold text-slate-200">Lobby Summary</h3>
               <div className="grid items-center gap-2 md:grid-cols-[170px_1fr]">
                 <LiquidWaveCircle percent={claimedPercent} />
                 <div className="grid grid-cols-1 gap-2 text-xs">
-                  <div className="shimmer-border rounded-xl border border-white/10 bg-stone-900/60 p-2">
+                  <div className="shimmer-border rounded-xl border border-white/10 bg-stone-900/60 p-2 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                     <p className="text-stone-400">Item Subtotal</p>
                     <p className="font-semibold text-stone-100"><NumberTicker value={uiItemSubtotal} /></p>
                   </div>
-                  <div className="shimmer-border rounded-xl border border-white/10 bg-stone-900/60 p-2">
+                  <div className="shimmer-border rounded-xl border border-white/10 bg-stone-900/60 p-2 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                     <p className="text-stone-400">Extra Charges</p>
                     <p className="font-semibold text-stone-100"><NumberTicker value={uiExtraCharges} /></p>
                   </div>
-                  <div className="shimmer-border rounded-xl border border-white/10 bg-stone-900/60 p-2">
+                  <div className="shimmer-border rounded-xl border border-white/10 bg-stone-900/60 p-2 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                     <p className="text-stone-400">Grand</p>
                     <p className="font-semibold text-stone-100"><NumberTicker value={uiGrandTotal} /></p>
                   </div>
-                  <div className="shimmer-border rounded-xl border border-amber-300/20 bg-amber-500/10 p-2">
+                  <div className="shimmer-border rounded-xl border border-amber-300/20 bg-amber-500/10 p-2 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                     <p className="text-amber-200">Claimed</p>
                     <p className="font-semibold text-amber-200"><NumberTicker value={summary?.claimed_total || 0} /></p>
                   </div>
-                  <div className="shimmer-border rounded-xl border border-rose-300/20 bg-rose-500/10 p-2">
+                  <div className="shimmer-border rounded-xl border border-rose-300/20 bg-rose-500/10 p-2 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                     <p className="text-rose-200">Items Pending</p>
                     <p className="font-semibold text-rose-200"><NumberTicker value={summary?.unclaimed_item_total || 0} /></p>
                   </div>
@@ -1661,7 +2280,7 @@ export default function Page() {
                 </div>
               )}
             </div>
-            <div className="glass aurora-border p-4">
+            <div className="glass aurora-border p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]">
               <h3 className="mb-2 text-sm font-semibold text-slate-200">Invite</h3>
               <div className="space-y-2">
                 <input
@@ -1671,7 +2290,7 @@ export default function Page() {
                 />
                 <MagneticButton
                   type="button"
-                  className="btn-secondary w-full"
+                  className="btn-secondary w-full min-h-[44px] px-6"
                   onClick={copyJoinLink}
                   disabled={!joinUrl}
                 >
@@ -1683,9 +2302,18 @@ export default function Page() {
                     <img src={joinQrUrl} alt="Lobby QR" className="h-40 w-40 rounded-lg object-contain" />
                   </div>
                 )}
+                {isHost && (
+                  <button
+                    type="button"
+                    onClick={closeTable}
+                    className="mt-6 w-full rounded-xl border border-rose-500/30 bg-rose-500/10 py-3 font-bold tracking-wide text-rose-500 transition-all hover:scale-[0.98] hover:bg-rose-500/20 hover:shadow-[0_0_20px_rgba(244,63,94,0.3)] active:scale-95"
+                  >
+                    Close Table
+                  </button>
+                )}
               </div>
             </div>
-          </aside>
+          </motion.aside>
         </motion.section>
       )}
       </AnimatePresence>
@@ -1693,7 +2321,7 @@ export default function Page() {
       {step === "lobby" && (
         <motion.div
           layoutId="total-bubble"
-          className="fixed bottom-4 right-4 z-40 hidden w-60 cursor-pointer rounded-3xl border border-white/20 bg-white/10 p-3 shadow-soft backdrop-blur-2xl lg:block"
+          className="fixed bottom-6 right-6 z-40 hidden w-60 cursor-pointer rounded-2xl border border-white/20 bg-white/10 p-3 shadow-soft backdrop-blur-2xl lg:block"
           style={{ y: bubbleY }}
           onClick={() => setIsTotalModalOpen(true)}
         >
@@ -1715,12 +2343,68 @@ export default function Page() {
       {step === "lobby" && (
         <button
           type="button"
+          onClick={() => setIsTotalModalOpen(true)}
+          className="fixed bottom-0 left-0 right-0 z-50 w-full rounded-t-3xl border-t border-[#f59e0b]/30 bg-[#0c0a09]/95 p-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] backdrop-blur-3xl active:scale-[0.99] lg:hidden"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-300">Your Total</span>
+            <span className="font-price text-2xl font-bold text-emerald-300">Rs {Number(myTotal).toFixed(2)}</span>
+          </div>
+        </button>
+      )}
+      {step === "lobby" && (
+        <button
+          type="button"
           onClick={backToScanner}
-          className="btn-primary fab-glow fixed bottom-4 left-4 z-40 rounded-full px-5 py-3 text-xs md:hidden"
+          className="btn-primary fab-glow fixed bottom-24 left-4 z-40 rounded-full px-5 py-3 text-xs active:scale-95 md:hidden"
         >
           Scan
         </button>
       )}
+
+      <AnimatePresence>
+        {resetConfirm && (
+          <motion.div
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setResetConfirm(null)}
+          >
+            <motion.div
+              className="w-full max-w-sm rounded-3xl border border-white/10 bg-[#0c0a09]/80 p-5 shadow-soft backdrop-blur-2xl"
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-base font-semibold text-white">Reset Claims</h3>
+              <p className="mt-2 text-sm text-slate-300">
+                {resetConfirm.resetUserName
+                  ? `Reset ${resetConfirm.resetUserName}'s claim for ${resetConfirm.itemName}?`
+                  : `Reset all claims for ${resetConfirm.itemName}?`}
+              </p>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="btn-ghost rounded-xl px-4 py-2"
+                  onClick={() => setResetConfirm(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="rounded-xl bg-[#f59e0b] px-4 py-2 text-sm font-semibold text-stone-950 transition hover:shadow-[0_0_15px_#f59e0b]"
+                  onClick={confirmResetAction}
+                >
+                  Confirm
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {claimConfirm && (
@@ -1784,20 +2468,67 @@ export default function Page() {
                   Close
                 </button>
               </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-2">
-                  <span className="text-slate-300">Subtotal</span>
-                  <span className="font-price text-emerald-200">Rs {myTotal.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-amber-300/20 bg-amber-500/10 p-2">
-                  <span className="text-amber-100">Extra Charges Share</span>
-                  <span className="font-price text-amber-200">Rs {myExtraShare.toFixed(2)}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-2">
-                  <span className="text-slate-300">Payable</span>
-                  <span className="font-price text-emerald-200">Rs {myTotal.toFixed(2)}</span>
-                </div>
-              </div>
+              <AnimatePresence mode="wait">
+                {!isSettled ? (
+                  <motion.div
+                    key="breakdown-view"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="space-y-2 text-sm"
+                  >
+                    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-2">
+                      <span className="text-slate-300">Subtotal</span>
+                      <span className="font-price text-emerald-200">Rs {Number(myClaimedBase).toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-amber-300/20 bg-amber-500/10 p-2">
+                      <span className="inline-flex items-center gap-2 text-amber-100">
+                        Extra Charges
+                        <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-[11px] text-amber-200">
+                          {Number(myProportionalRatio * 100).toFixed(1)}%
+                        </span>
+                      </span>
+                      <span className="font-price text-amber-200">Rs {Number(myExtraShare).toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-amber-300/25 bg-amber-500/10 p-2 shadow-[inset_0_0_15px_rgba(245,158,11,0.2)]">
+                      <span className="font-semibold text-amber-100">Payable</span>
+                      <span className="font-price text-base font-bold text-amber-200">Rs {Number(myTotal).toFixed(2)}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={settleMyShare}
+                      className="mt-4 w-full rounded-xl bg-[#f59e0b] py-3 font-bold text-black transition hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+                    >
+                      Settle My Share
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="settled-view"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.22, ease: "easeOut" }}
+                    className="space-y-4 text-center"
+                  >
+                    <h4 className="text-2xl font-black text-emerald-300 drop-shadow-[0_0_14px_rgba(16,185,129,0.45)]">
+                      Share Settled!
+                    </h4>
+                    <div className="mx-auto mb-6 inline-flex items-center justify-center rounded-2xl bg-white p-4 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                      <QRCode value={upiString} size={200} style={{ width: 200, height: 200, display: "block" }} />
+                    </div>
+                    <p className="text-xs text-slate-300">Scan this UPI QR and pay host: Rs {Number(myTotal).toFixed(2)}</p>
+                    <button
+                      type="button"
+                      className="w-full rounded-xl border border-white/20 bg-white/5 py-3 font-semibold text-white transition hover:bg-white/10"
+                      onClick={() => setIsTotalModalOpen(false)}
+                    >
+                      Close
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           </motion.div>
         )}
@@ -1806,13 +2537,14 @@ export default function Page() {
       <AnimatePresence>
         {isBillViewerOpen && billImage && (
           <motion.div
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-3"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-3 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsBillViewerOpen(false)}
           >
             <motion.div
+              layoutId="receipt-lightbox-image"
               className="relative h-[95vh] w-[95vw] rounded-2xl border border-white/10 bg-slate-950/80 p-3"
               initial={{ scale: 0.96, opacity: 0.8 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -1835,8 +2567,15 @@ export default function Page() {
                   <button className="btn-secondary rounded-full px-3 py-1 text-xs" onClick={() => adjustBillZoom(0.2)}>
                     +
                   </button>
-                  <button className="btn-primary rounded-full px-3 py-1 text-xs" onClick={() => setIsBillViewerOpen(false)}>
-                    Close
+                  <button
+                    type="button"
+                    title="Close"
+                    className="rounded-full border border-white/25 bg-white/5 p-2 text-slate-200 transition hover:bg-white/15"
+                    onClick={() => setIsBillViewerOpen(false)}
+                  >
+                    <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden>
+                      <path d="M5 5 15 15M15 5 5 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
                   </button>
                 </div>
               </div>

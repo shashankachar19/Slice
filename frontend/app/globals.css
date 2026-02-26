@@ -113,15 +113,15 @@ body {
 }
 
 .btn-primary {
-  @apply rounded-2xl bg-amber-500 px-4 py-2 text-sm font-semibold text-stone-950 shadow-soft transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60;
+  @apply rounded-2xl bg-amber-500 px-4 py-2 text-sm font-semibold text-stone-950 shadow-soft transition hover:bg-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 .btn-secondary {
-  @apply rounded-2xl bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 shadow-soft transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60;
+  @apply rounded-2xl bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 shadow-soft transition hover:bg-slate-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 .btn-ghost {
-  @apply rounded-2xl border border-amber-400/70 bg-transparent px-4 py-2 text-sm font-semibold text-amber-200 transition disabled:cursor-not-allowed disabled:opacity-60;
+  @apply rounded-2xl border border-amber-400/70 bg-transparent px-4 py-2 text-sm font-semibold text-amber-200 transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-60;
   box-shadow: 0 0 0 rgba(245, 158, 11, 0);
 }
 

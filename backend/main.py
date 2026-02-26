@@ -1,7 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, Query, HTTPException, Header
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from paddleocr import PaddleOCR
+import asyncio
 import cv2
 import numpy as np
 import re
@@ -16,11 +17,13 @@ import urllib.error
 import uuid
 import sqlite3
 import math
+from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from pydantic import BaseModel, Field
 
 app = FastAPI()
+lobby_locks = defaultdict(asyncio.Lock)
 
 
 def load_dotenv_file() -> None:
@@ -63,7 +66,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ALLOW_ORIGINS,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "X-Lobby-Passcode"],
 )
 
@@ -1362,20 +1365,27 @@ def compute_lobby_summary(lobby_id: str) -> Dict[str, Any]:
     claimed_base_total = round(sum(float(user["base_total"]) for user in per_user.values()), 2)
     extra_share_cents: Dict[str, int] = {uid: 0 for uid in per_user.keys()}
     extra_cents = int(round(extra_charges * 100))
-    if extra_cents > 0 and item_subtotal > 0:
+    if extra_cents > 0 and item_subtotal > 0 and claimed_base_total > 0:
+        # Only distribute the claimable slice of extra charges; keep the rest unclaimed.
+        allocatable_cents = int(round((extra_cents * claimed_base_total) / item_subtotal))
         raw_cents: Dict[str, float] = {}
         floor_sum = 0
         for uid, user in per_user.items():
             weight = max(0.0, float(user["base_total"]))
-            raw = (extra_cents * weight) / item_subtotal
+            if weight <= 0:
+                raw_cents[uid] = 0.0
+                extra_share_cents[uid] = 0
+                continue
+            raw = (allocatable_cents * weight) / claimed_base_total
             base = int(math.floor(raw))
             raw_cents[uid] = raw
             extra_share_cents[uid] = base
             floor_sum += base
-        remainder = max(0, extra_cents - floor_sum)
+        remainder = max(0, allocatable_cents - floor_sum)
         if remainder > 0:
+            eligible_users = [uid for uid, user in per_user.items() if float(user.get("base_total", 0)) > 0]
             by_fraction = sorted(
-                per_user.keys(),
+                eligible_users,
                 key=lambda uid: (raw_cents.get(uid, 0.0) - extra_share_cents.get(uid, 0)),
                 reverse=True,
             )
@@ -1500,42 +1510,50 @@ async def join_lobby(lobby_id: str, req: JoinLobbyRequest):
 
 @app.post("/lobby/{lobby_id}/claim")
 async def claim_item(lobby_id: str, req: ClaimItemRequest):
-    validate_lobby_passcode(lobby_id, req.lobby_passcode)
-    participants = fetch_participants(lobby_id)
-    if req.user_id not in participants:
-        raise HTTPException(status_code=400, detail="User not in lobby")
-    items = fetch_lobby_items(lobby_id)
-    item = next((i for i in items if i["id"] == req.item_id), None)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if req.quantity < 0:
-        raise HTTPException(status_code=400, detail="Quantity must be >= 0")
+    async with lobby_locks[lobby_id]:
+        validate_lobby_passcode(lobby_id, req.lobby_passcode)
+        participants = fetch_participants(lobby_id)
+        if req.user_id not in participants:
+            raise HTTPException(status_code=400, detail="User not in lobby")
+        items = fetch_lobby_items(lobby_id)
+        item = next((i for i in items if i["id"] == req.item_id), None)
+        if not item:
+            raise HTTPException(status_code=404, detail="Item not found")
+        if req.quantity < 0:
+            raise HTTPException(status_code=400, detail="Quantity must be >= 0")
 
-    item_id = req.item_id
-    claims = fetch_claims(lobby_id)
-    if item_id not in claims:
-        claims[item_id] = {}
-    claimed_by_others = sum(float(v) for uid, v in claims[item_id].items() if uid != req.user_id)
-    max_allowed = float(item.get("quantity", 1)) - claimed_by_others
-    if req.quantity > max_allowed + 1e-6:
-        raise HTTPException(status_code=400, detail=f"Max claimable quantity is {round(max_allowed, 3)}")
-    with get_db_conn() as conn:
-        if req.quantity == 0:
-            conn.execute(
-                "DELETE FROM claims WHERE lobby_id = ? AND item_id = ? AND user_id = ?",
-                (lobby_id, item_id, req.user_id),
+        item_id = req.item_id
+        claims = fetch_claims(lobby_id)
+        if item_id not in claims:
+            claims[item_id] = {}
+        total_qty = float(item.get("quantity", 1))
+        claimed_by_others = sum(float(v) for uid, v in claims[item_id].items() if uid != req.user_id)
+        # Strict conflict protection: reject claims that exceed remaining quantity.
+        if claimed_by_others + float(req.quantity) > total_qty + 1e-6:
+            return JSONResponse(
+                status_code=409,
+                content={"error": "Too slow! Item already claimed by someone else."},
             )
-        else:
-            conn.execute(
-                """
-                INSERT INTO claims (lobby_id, item_id, user_id, quantity)
-                VALUES (?, ?, ?, ?)
-                ON CONFLICT(lobby_id, item_id, user_id) DO UPDATE SET quantity=excluded.quantity
-                """,
-                (lobby_id, item_id, req.user_id, float(req.quantity)),
-            )
-        conn.commit()
-    return {"ok": True, "lobby_id": lobby_id, "item_id": item_id, "user_id": req.user_id, "quantity": req.quantity}
+        max_allowed = total_qty - claimed_by_others
+        if req.quantity > max_allowed + 1e-6:
+            raise HTTPException(status_code=400, detail=f"Max claimable quantity is {round(max_allowed, 3)}")
+        with get_db_conn() as conn:
+            if req.quantity == 0:
+                conn.execute(
+                    "DELETE FROM claims WHERE lobby_id = ? AND item_id = ? AND user_id = ?",
+                    (lobby_id, item_id, req.user_id),
+                )
+            else:
+                conn.execute(
+                    """
+                    INSERT INTO claims (lobby_id, item_id, user_id, quantity)
+                    VALUES (?, ?, ?, ?)
+                    ON CONFLICT(lobby_id, item_id, user_id) DO UPDATE SET quantity=excluded.quantity
+                    """,
+                    (lobby_id, item_id, req.user_id, float(req.quantity)),
+                )
+            conn.commit()
+        return {"ok": True, "lobby_id": lobby_id, "item_id": item_id, "user_id": req.user_id, "quantity": req.quantity}
 
 
 @app.post("/claim-item")
@@ -1728,91 +1746,92 @@ async def reset_claim(lobby_id: str, req: ClaimResetRequest):
 
 @app.post("/lobby/{lobby_id}/item-add")
 async def add_lobby_item(lobby_id: str, req: AddLobbyItemRequest):
-    validate_lobby_passcode(lobby_id, req.lobby_passcode)
-    validate_participant_actor(lobby_id, req.actor_user_id)
+    async with lobby_locks[lobby_id]:
+        validate_lobby_passcode(lobby_id, req.lobby_passcode)
+        validate_participant_actor(lobby_id, req.actor_user_id)
 
-    name = req.name.strip()
-    if len(name) < 2:
-        raise HTTPException(status_code=400, detail="Item name is too short")
+        name = req.name.strip()
+        if len(name) < 2:
+            raise HTTPException(status_code=400, detail="Item name is too short")
 
-    quantity = float(req.quantity)
-    unit_price = float(req.unit_price)
-    if quantity <= 0:
-        raise HTTPException(status_code=400, detail="Quantity must be > 0")
-    if unit_price < 0:
-        raise HTTPException(status_code=400, detail="Unit price must be >= 0")
+        quantity = float(req.quantity)
+        unit_price = float(req.unit_price)
+        if quantity <= 0:
+            raise HTTPException(status_code=400, detail="Quantity must be > 0")
+        if unit_price < 0:
+            raise HTTPException(status_code=400, detail="Unit price must be >= 0")
 
-    if req.cost is None:
-        # No explicit cost: compute from qty x unit, requiring unit price.
-        if unit_price <= 0:
-            raise HTTPException(status_code=400, detail="Provide unit_price or cost")
-        cost = round(quantity * unit_price, 2)
-    else:
-        # Explicit cost is authoritative for manual corrections.
-        cost = float(req.cost)
-        if cost <= 0:
-            raise HTTPException(status_code=400, detail="Cost must be > 0")
-        if unit_price <= 0 and quantity > 0:
-            unit_price = round(cost / quantity, 2)
+        if req.cost is None:
+            # No explicit cost: compute from qty x unit, requiring unit price.
+            if unit_price <= 0:
+                raise HTTPException(status_code=400, detail="Provide unit_price or cost")
+            cost = round(quantity * unit_price, 2)
         else:
-            expected_cost = round(quantity * unit_price, 2)
-            if abs(cost - expected_cost) > max(1.0, 0.05 * max(1.0, expected_cost)):
-                # Keep user-entered cost and normalize unit price to avoid reject-on-small-OCR/manual variance.
+            # Explicit cost is authoritative for manual corrections.
+            cost = float(req.cost)
+            if cost <= 0:
+                raise HTTPException(status_code=400, detail="Cost must be > 0")
+            if unit_price <= 0 and quantity > 0:
                 unit_price = round(cost / quantity, 2)
+            else:
+                expected_cost = round(quantity * unit_price, 2)
+                if abs(cost - expected_cost) > max(1.0, 0.05 * max(1.0, expected_cost)):
+                    # Keep user-entered cost and normalize unit price to avoid reject-on-small-OCR/manual variance.
+                    unit_price = round(cost / quantity, 2)
 
-    base_item = {
-        "id": next_item_id(lobby_id),
-        "name": name,
-        "quantity": int(quantity) if float(quantity).is_integer() else quantity,
-        "unit_price": round(unit_price, 2),
-        "cost": round(cost, 2),
-    }
-    enriched = enrich_items_with_category([base_item])[0]
-    if req.category:
-        forced = req.category.strip().lower()
-        if forced not in {"veg", "non_veg", "drinks", "other"}:
-            raise HTTPException(status_code=400, detail="Invalid category")
-        enriched["category"] = forced
-        enriched["category_confidence"] = 1.0
-        enriched["category_source"] = "user_selected"
-    if enriched.get("category") == "other":
-        chosen = (req.other_subcategory or "").strip().lower()
-        if chosen:
-            if chosen not in OTHER_CATEGORY_OPTIONS:
-                raise HTTPException(status_code=400, detail=f"other_subcategory must be one of {OTHER_CATEGORY_OPTIONS}")
-            enriched["other_subcategory"] = chosen
-        elif "other_subcategory" in enriched:
-            del enriched["other_subcategory"]
-        enriched["other_category_options"] = suggest_other_options(enriched["name"])
-    else:
-        enriched.pop("other_subcategory", None)
-        enriched.pop("other_category_options", None)
+        base_item = {
+            "id": next_item_id(lobby_id),
+            "name": name,
+            "quantity": int(quantity) if float(quantity).is_integer() else quantity,
+            "unit_price": round(unit_price, 2),
+            "cost": round(cost, 2),
+        }
+        enriched = enrich_items_with_category([base_item])[0]
+        if req.category:
+            forced = req.category.strip().lower()
+            if forced not in {"veg", "non_veg", "drinks", "other"}:
+                raise HTTPException(status_code=400, detail="Invalid category")
+            enriched["category"] = forced
+            enriched["category_confidence"] = 1.0
+            enriched["category_source"] = "user_selected"
+        if enriched.get("category") == "other":
+            chosen = (req.other_subcategory or "").strip().lower()
+            if chosen:
+                if chosen not in OTHER_CATEGORY_OPTIONS:
+                    raise HTTPException(status_code=400, detail=f"other_subcategory must be one of {OTHER_CATEGORY_OPTIONS}")
+                enriched["other_subcategory"] = chosen
+            elif "other_subcategory" in enriched:
+                del enriched["other_subcategory"]
+            enriched["other_category_options"] = suggest_other_options(enriched["name"])
+        else:
+            enriched.pop("other_subcategory", None)
+            enriched.pop("other_category_options", None)
 
-    with get_db_conn() as conn:
-        conn.execute(
-            """
-            INSERT INTO lobby_items (
-                lobby_id, item_id, name, quantity, unit_price, cost,
-                category, category_confidence, category_source, other_subcategory, other_category_options_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                lobby_id,
-                enriched["id"],
-                enriched["name"],
-                float(enriched.get("quantity", 1)),
-                float(enriched.get("unit_price", 0)),
-                float(enriched.get("cost", 0)),
-                enriched.get("category"),
-                float(enriched.get("category_confidence", 0)),
-                enriched.get("category_source"),
-                enriched.get("other_subcategory"),
-                json.dumps(enriched.get("other_category_options")) if enriched.get("other_category_options") else None,
-            ),
-        )
-        conn.commit()
+        with get_db_conn() as conn:
+            conn.execute(
+                """
+                INSERT INTO lobby_items (
+                    lobby_id, item_id, name, quantity, unit_price, cost,
+                    category, category_confidence, category_source, other_subcategory, other_category_options_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    lobby_id,
+                    enriched["id"],
+                    enriched["name"],
+                    float(enriched.get("quantity", 1)),
+                    float(enriched.get("unit_price", 0)),
+                    float(enriched.get("cost", 0)),
+                    enriched.get("category"),
+                    float(enriched.get("category_confidence", 0)),
+                    enriched.get("category_source"),
+                    enriched.get("other_subcategory"),
+                    json.dumps(enriched.get("other_category_options")) if enriched.get("other_category_options") else None,
+                ),
+            )
+            conn.commit()
 
-    return {"ok": True, "lobby_id": lobby_id, "item": enriched}
+        return {"ok": True, "lobby_id": lobby_id, "item": enriched}
 
 
 @app.get("/lobby/{lobby_id}/summary")
@@ -1872,6 +1891,28 @@ async def lobby_state(lobby_id: str, x_lobby_passcode: str = Header(..., alias="
 async def lobby_items(lobby_id: str, x_lobby_passcode: str = Header(..., alias="X-Lobby-Passcode")):
     validate_lobby_passcode(lobby_id, x_lobby_passcode)
     return {"lobby_id": lobby_id, "items": fetch_lobby_items(lobby_id)}
+
+
+@app.delete("/lobby/{lobby_id}")
+async def close_lobby(
+    lobby_id: str,
+    actor_user_id: str = Query(...),
+    x_lobby_passcode: str = Header(..., alias="X-Lobby-Passcode"),
+):
+    async with lobby_locks[lobby_id]:
+        validate_lobby_passcode(lobby_id, x_lobby_passcode)
+        validate_host_actor(lobby_id, actor_user_id)
+        with get_db_conn() as conn:
+            conn.execute("DELETE FROM claims WHERE lobby_id = ?", (lobby_id,))
+            conn.execute("DELETE FROM participants WHERE lobby_id = ?", (lobby_id,))
+            conn.execute("DELETE FROM lobby_items WHERE lobby_id = ?", (lobby_id,))
+            conn.execute("DELETE FROM lobbies WHERE id = ?", (lobby_id,))
+            conn.commit()
+        if lobby_id in LOBBIES:
+            LOBBIES.pop(lobby_id, None)
+        if lobby_id in lobby_locks:
+            lobby_locks.pop(lobby_id, None)
+    return {"ok": True, "message": "Lobby closed successfully", "lobby_id": lobby_id}
 
 
 @app.post("/scan-bill")

@@ -11,13 +11,24 @@ backend/test_receipts/.env
 
 # Python
 backend/venv/
+backend/.venv/
+.venv/
 __pycache__/
 *.pyc
 
 # Node
 frontend/node_modules/
 frontend/.next/
+node_modules/
 
 # Local DB
 backend/app.db
 *.db
+
+# Local media/docs not required in source
+*.pptx
+
+# Common key/cert files
+*.pem
+*.key
+*.p12

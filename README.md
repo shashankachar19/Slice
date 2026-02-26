@@ -1,178 +1,186 @@
-# Slice Receipt Splitter
+﻿# Slice Receipt Splitter
 
-Slice is a receipt OCR and bill-splitting project with:
+## Aim and Goal
 
-- A FastAPI backend for receipt parsing, lobby management, and claim tracking
-- A Next.js frontend for scanning receipts, creating lobbies, and splitting costs
+Slice is a bill-splitting app that reads receipt images, extracts line items, and helps a group split costs in a shared lobby.
 
-## Quick Start
+Main goals:
 
-Run backend and frontend in separate terminals.
+- reduce manual bill-entry errors
+- make group settlement faster
+- provide tax-aware and total-aware split summary
 
-### Backend
+How the project addresses this:
+
+- supports hybrid OCR flow (PaddleOCR + Gemini)
+- provides lobby-based claim workflow for multiple users
+- includes summary logic for totals, taxes, and per-user split
+- applies security hardening for deployment (hashed passcodes, CORS allowlist, env-based secrets)
+
+## Project Structure
+
+- `backend/`: FastAPI API (OCR, lobby endpoints, split logic)
+- `frontend/`: Next.js app (scan/upload UI, create/join lobby, claim flow)
+- `assets/screenshots/`: screenshots shown in this README
+
+## Screenshots
+
+![Home Page](assets/screenshots/home_page.png)
+![Upload Page](assets/screenshots/upload_page.png)
+![Scan Page](assets/screenshots/scan_page.png)
+![Lobby Page](assets/screenshots/lobby_page.png)
+![Editing Page](assets/screenshots/editng_page.png)
+![Tax Summary Page](assets/screenshots/tax_summary_page.png)
+![Final Summary Page](assets/screenshots/finall_summary_page.png)
+
+## Prerequisites
+
+Install before running:
+
+- Python `3.10.x` (recommended `3.10.14`)
+- Node.js `18+` and npm
+- Git
+
+## Run Locally (Beginner Friendly)
+
+Use two terminals: one for backend and one for frontend.
+
+### 1. Clone repository
+
+```powershell
+git clone https://github.com/shashankachar19/Slice.git
+cd Slice
+```
+
+### 2. Start backend (Terminal 1)
 
 ```powershell
 cd backend
-.\venv\Scripts\Activate.ps1
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-Backend docs: `http://127.0.0.1:8000/docs`
-
-### Frontend
-
-```powershell
-cd frontend
-npm run dev
-```
-
-Frontend: `http://localhost:3000`
-
-## Environment Notes
-
-Frontend API base is controlled by `frontend/.env.local`:
+Create `backend/.env` using `backend/.env.example` as reference:
 
 ```env
-NEXT_PUBLIC_API_BASE=http://127.0.0.1:8000
-```
-
-If using phone + hotspot/Wi-Fi, replace `127.0.0.1` with your current laptop IPv4 and restart frontend.
-
-Backend env values (local only) can be placed in `backend/.env`:
-
-```env
-GEMINI_API_KEY=your_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-1.5-flash
 GEMINI_TIMEOUT_SEC=12
 CORS_ALLOW_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 PASSCODE_HASH_ITERATIONS=390000
 ```
 
-## Production Security Checklist
-
-- Do not commit `.env`, `.env.local`, `*.db`, `venv`, `node_modules`.
-- Rotate any key previously used in local test files.
-- Set production env vars in hosting dashboards only:
-  - Backend: `GEMINI_API_KEY`, `CORS_ALLOW_ORIGINS`, optional `PASSCODE_HASH_ITERATIONS`
-  - Frontend: `NEXT_PUBLIC_API_BASE`
-- Restrict backend CORS with exact frontend origin(s) only.
-- Lobby passcodes are now:
-  - hashed at rest in DB using PBKDF2-SHA256
-  - sent in `X-Lobby-Passcode` header for read endpoints (not URL query params)
-
-## Deploy (Recommended)
-
-1. Deploy backend first (Render/Railway/Fly.io) and set backend env vars in dashboard.
-2. Deploy frontend (Vercel) with `NEXT_PUBLIC_API_BASE=https://<your-backend-domain>`.
-3. Update backend `CORS_ALLOW_ORIGINS` to your frontend domain, for example:
-   - `https://your-app.vercel.app`
-
-## Evaluation
-
-Run evaluation from backend:
+Run backend:
 
 ```powershell
-cd backend
-.\venv\Scripts\Activate.ps1
-python evaluate_receipts.py
-python evaluate_receipts.py --compare-hybrid
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Reports are written to:
+Test backend:
 
-- `backend/test_receipts/reports/evaluation_report_paddle.json`
-- `backend/test_receipts/reports/evaluation_report_hybrid.json`
+- `http://127.0.0.1:8000/health`
 
-Regression tests for hard total patterns:
+### 3. Start frontend (Terminal 2)
 
 ```powershell
-cd backend
-.\venv\Scripts\Activate.ps1
-python -m unittest tests.test_totals_regression
+cd frontend
+npm install
 ```
 
-## Analysis
+Create `frontend/.env.local` using `frontend/.env.local.example` as reference:
 
-### 1. Problem Context
+```env
+NEXT_PUBLIC_API_BASE=http://127.0.0.1:8000
+NEXT_PUBLIC_SCAN_USE_HYBRID=true
+```
 
-Receipt understanding for bill-splitting is hard because OCR text can be noisy, line items can be merged, and totals are expressed in many formats (`Bill Total`, `Net To Pay`, VAT/service lines, round-off). A correct split requires both item extraction and reliable total interpretation.
+Notes:
 
-### 2. Approach
+- set `NEXT_PUBLIC_SCAN_USE_HYBRID=true` to force hybrid OCR locally
+- set it to `false` for faster and more stable demo on low-resource hosting
 
-The pipeline is hybrid:
+Run frontend:
 
-- **Primary extraction**: PaddleOCR + rule-based parsing for item rows (`name`, `quantity`, `unit_price`, `cost`)
-- **Fallback path**: optional Gemini fallback when OCR quality is weak
-- **Post-processing**:
-  - non-item filtering
-  - category enrichment
-  - totals detection (`subtotal`, `grand_total`, `tax_total`, `service`, `round_off`)
-  - subtotal/grand-total sanity checks
+```powershell
+npm run dev
+```
 
-### 3. Evaluation Protocol
+Open app:
 
-Evaluation uses labeled receipts in:
+- `http://localhost:3000`
 
-- `backend/test_receipts/images`
-- `backend/test_receipts/labels`
+## If You Change Hotspot or Wi-Fi
 
-Modes:
+Your laptop IP may change. If that happens:
 
-- Paddle-only
-- Hybrid (Paddle + fallback)
+1. Update `NEXT_PUBLIC_API_BASE` in `frontend/.env.local`
+2. Add the new frontend origin in `CORS_ALLOW_ORIGINS` in `backend/.env`
+3. Restart both backend and frontend servers
 
-### 4. Metrics
+## Keep Secrets Safe
 
-- Item Precision
-- Item Recall
-- Item F1
-- Quantity Accuracy (matched items)
-- Cost Accuracy (matched items)
-- Receipt-level Total Match Rate
+Do not commit:
 
-### 5. Key Findings
+- `.env`, `.env.local`, key files (`*.pem`, `*.key`)
+- local DB files (`*.db`)
+- local dependency folders (`node_modules`, `.venv`)
 
-- Hybrid mode improves robustness when OCR confidence is low or parsed item count is small.
-- Rule-based extraction performs well on clean printed receipts.
-- Most financial errors come from total-line interpretation, not item-line OCR.
+If any key was exposed previously, rotate it and update only hosting env vars.
 
-### 6. Failure Analysis
+## Safe Push to GitHub
 
-Observed failure patterns:
+Check what is currently changed:
 
-- subtotal interpreted as grand total when payable line is missed
-- tax/service lines not carried into final total
-- OCR token merge/split causing incorrect qty/unit/amount alignment
+```powershell
+git status
+```
 
-### 7. Fixes Implemented
+Stage only relevant files:
 
-Recent fixes in this codebase:
+```powershell
+git add README.md assets/screenshots backend frontend netlify.toml .gitignore
+```
 
-- Improved totals parser to detect:
-  - `Bill Total` as subtotal
-  - `Net To Pay` / `Amount Payable` as grand total
-  - signed round-off (e.g., `R. Off: -0.42`)
-- Added tax breakdown capture from VAT/GST/service lines.
-- Persisted parsed `receipt_totals` at lobby creation and used them in summary calculations so `grand_total` includes extra charges beyond item subtotal.
+Commit and push:
 
-### 8. Limitations and Next Steps
+```powershell
+git commit -m "Update docs, screenshots, and latest project changes"
+git push origin main
+```
 
-Current limitations:
+## Redeploy Backend on Render (Existing Service)
 
-- blurry/low-light images
-- severe OCR line fragmentation
-- uncommon layouts and mixed-language bills
+1. Open existing Render service `Slice`
+2. Verify env vars:
+   - `GEMINI_API_KEY`
+   - `CORS_ALLOW_ORIGINS` (exact frontend URL)
+   - `PASSCODE_HASH_ITERATIONS=390000`
+   - `PYTHON_VERSION=3.10.14`
+3. Click `Manual Deploy` -> `Deploy latest commit`
+4. Wait for `Live`
+5. Verify health endpoint:
+   - `https://<your-render-url>/health`
 
-Planned improvements:
+## Redeploy Frontend on Netlify
 
-- confidence-weighted total selection
-- stronger table-structure recovery
-- tax-line classifier
-- larger edge-case labeled dataset
+1. Open Netlify project -> `Deploys`
+2. Trigger deploy from latest `main`
+3. Verify env vars:
+   - `NEXT_PUBLIC_API_BASE=https://<your-render-backend-url>`
+   - `NEXT_PUBLIC_SCAN_USE_HYBRID=true` or `false`
+4. Hard refresh browser (`Ctrl + Shift + R`)
 
-## Judge Summary (Short Version)
+## Common Issues
 
-- **Problem**: OCR-based bill splitting fails when totals/taxes are parsed inconsistently.
-- **Solution**: Hybrid OCR extraction + rule-based post-processing + totals sanity logic.
-- **Validation**: Automated evaluation script reports item-level and total-level metrics for paddle-only vs hybrid.
-- **Impact**: Improved financial correctness by preserving and applying detected receipt totals (including tax and round-off) in lobby summary.
+`Failed to fetch`:
+
+- backend not running or sleeping
+- wrong `NEXT_PUBLIC_API_BASE`
+- CORS not allowing frontend origin
+
+Slow first scan on free hosting:
+
+- cold start delay
+- OCR model download on first request
+- hybrid mode is heavier than Gemini-only mode
