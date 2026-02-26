@@ -41,7 +41,7 @@ Install before running:
 - Node.js `18+` and npm
 - Git
 
-## Run Locally (Beginner Friendly)
+## Run Locally
 
 Use two terminals: one for backend and one for frontend.
 
