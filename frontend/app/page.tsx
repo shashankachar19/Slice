@@ -9,7 +9,6 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useSearchParams } from "next/navigation";
 import QRCode from "react-qr-code";
 import Webcam from "react-webcam";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type MouseEvent as ReactMouseEvent, type ReactNode, type TouchEvent as ReactTouchEvent } from "react";
@@ -465,7 +464,7 @@ function LiquidWaveCircle({ percent }: { percent: number }) {
 }
 
 export default function Page() {
-  const search = useSearchParams();
+  const [searchString, setSearchString] = useState("");
   const webcamRef = useRef<Webcam>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<"landing" | "scanner" | "lobby">("landing");
@@ -710,6 +709,7 @@ export default function Page() {
     if (!joinUrl) return "";
     return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(joinUrl)}`;
   }, [joinUrl]);
+  const searchParams = useMemo(() => new URLSearchParams(searchString), [searchString]);
   const webcamVideoConstraints = useMemo(() => {
     if (selectedCameraId) {
       return {
@@ -1101,10 +1101,18 @@ export default function Page() {
   }, [step, lobbyId, passcode]);
 
   useEffect(() => {
-    const inviteLobbyId = (search.get("lobby_id") || "").trim();
+    if (typeof window === "undefined") return;
+    const syncSearch = () => setSearchString(window.location.search || "");
+    syncSearch();
+    window.addEventListener("popstate", syncSearch);
+    return () => window.removeEventListener("popstate", syncSearch);
+  }, []);
+
+  useEffect(() => {
+    const inviteLobbyId = (searchParams.get("lobby_id") || "").trim();
     if (!inviteLobbyId) return;
-    const invitePasscode = (search.get("passcode") || "").trim();
-    const inviteName = (search.get("user_name") || search.get("name") || userName || "Guest").trim();
+    const invitePasscode = (searchParams.get("passcode") || "").trim();
+    const inviteName = (searchParams.get("user_name") || searchParams.get("name") || userName || "Guest").trim();
 
     setAppRole("participant");
     setStep("lobby");
@@ -1127,7 +1135,7 @@ export default function Page() {
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, lobbyId, userId]);
+  }, [searchParams, lobbyId, userId]);
 
   useEffect(() => {
     if (step === "scanner" && items.length > 0) {
