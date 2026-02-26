@@ -29,7 +29,6 @@ How the project addresses this:
 ![Upload Page](assets/screenshots/upload_page.png)
 ![Scan Page](assets/screenshots/scan_page.png)
 ![Lobby Page](assets/screenshots/lobby_page.png)
-![Editing Page](assets/screenshots/editng_page.png)
 ![Tax Summary Page](assets/screenshots/tax_summary_page.png)
 ![Final Summary Page](assets/screenshots/finall_summary_page.png)
 
