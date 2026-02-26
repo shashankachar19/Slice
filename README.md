@@ -118,59 +118,6 @@ Your laptop IP may change. If that happens:
 2. Add the new frontend origin in `CORS_ALLOW_ORIGINS` in `backend/.env`
 3. Restart both backend and frontend servers
 
-## Keep Secrets Safe
-
-Do not commit:
-
-- `.env`, `.env.local`, key files (`*.pem`, `*.key`)
-- local DB files (`*.db`)
-- local dependency folders (`node_modules`, `.venv`)
-
-If any key was exposed previously, rotate it and update only hosting env vars.
-
-## Safe Push to GitHub
-
-Check what is currently changed:
-
-```powershell
-git status
-```
-
-Stage only relevant files:
-
-```powershell
-git add README.md assets/screenshots backend frontend netlify.toml .gitignore
-```
-
-Commit and push:
-
-```powershell
-git commit -m "Update docs, screenshots, and latest project changes"
-git push origin main
-```
-
-## Redeploy Backend on Render (Existing Service)
-
-1. Open existing Render service `Slice`
-2. Verify env vars:
-   - `GEMINI_API_KEY`
-   - `CORS_ALLOW_ORIGINS` (exact frontend URL)
-   - `PASSCODE_HASH_ITERATIONS=390000`
-   - `PYTHON_VERSION=3.10.14`
-3. Click `Manual Deploy` -> `Deploy latest commit`
-4. Wait for `Live`
-5. Verify health endpoint:
-   - `https://<your-render-url>/health`
-
-## Redeploy Frontend on Netlify
-
-1. Open Netlify project -> `Deploys`
-2. Trigger deploy from latest `main`
-3. Verify env vars:
-   - `NEXT_PUBLIC_API_BASE=https://<your-render-backend-url>`
-   - `NEXT_PUBLIC_SCAN_USE_HYBRID=true` or `false`
-4. Hard refresh browser (`Ctrl + Shift + R`)
-
 ## Common Issues
 
 `Failed to fetch`:
