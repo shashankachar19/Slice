@@ -129,4 +129,4 @@ Slow first scan on free hosting:
 
 - cold start delay
 - OCR model download on first request
-- hybrid mode is heavier than Gemini-only mode
+- hybrid mode is heavier than Gemini-only mode.
